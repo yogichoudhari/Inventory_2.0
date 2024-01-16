@@ -1,0 +1,34 @@
+{% extends "email_otp_template.html" %}
+{%block title%}
+<title>Inventory Product stock information</title>
+{%endblock title%}
+{%block content%}
+<p style="font-size:1.1em">Hi,Admin</p>
+<p>This is to inform you that the product listed below is out of stock</p>
+<table style=" width: 100%;
+border-collapse: collapse;
+margin-bottom: 20px;">
+  
+        <tr style="        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd; background-color: #f2f2f2;">
+            <th>ID</th>
+            <th>Category</th>
+            <th>Title</th>
+            <th>brand</th>
+            <th>quantity</th>
+        </tr>
+
+        <tr style="        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;">
+            <td>{{id}}</td>
+            <td>{{category}}</td>
+            <td>{{title}}</td>
+            <td>{{brand}}</td>
+            <td>{{quantity}}</td>
+        </tr>
+
+</table>
+{%endblock content%}
+
