@@ -10,6 +10,7 @@ from rest_framework import status
 from django_q.tasks import async_task
 from django.core.cache import cache
 from salesforce.services import fetch_salesforce_users
+from user.models import User as CustomUser
 import pdb
 import datetime
 @api_view(['GET',"POST"])
@@ -33,5 +34,7 @@ def get_auth_token(request):
 
 @api_view(["POST","GET"])
 def get_salesforce_users(request):
-    users = async_task("salesforce.services.fetch_salesforce_users")
+    admin_user = CustomUser.objects.get(user=request.user)
+    # fetch_salesforce_users(admin_user)
+    async_task("salesforce.services.fetch_salesforce_users",admin_user)
     return Response(response_template(STATUS_SUCCESS,message="users are being fetched"))
