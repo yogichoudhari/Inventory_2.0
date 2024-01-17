@@ -15,6 +15,7 @@ from django.core.cache import cache
 from inventory_management_system.utils import (get_tokens_for_user,
                                                send_otp_via_email,
                                                response_template)
+from django_q.tasks import async_task
 from .services import grant_permission
 from decouple import config
 import stripe
@@ -50,7 +51,7 @@ def register_admin(request):
             )
             created_user_instance.stripe_id = customer_stripe_response.id
             created_user_instance.save()
-            send_otp_via_email(created_user_instance)
+            async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
             return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),
                             status=status.HTTP_201_CREATED)
         else:
@@ -120,7 +121,8 @@ def resend_otp(request):
     try:
         auth_user = User.objects.get(email=email)
         user = CustomUser.objects.get(user=auth_user)
-        send_otp_via_email(user)
+        async_task("inventory_management_system.utils.send_otp_via_email",user)
+        # send_otp_via_email(user)
     except Exception as e:
         logger.exception(f"an error occured : that email is incorrect")
         return Response(response_template(STATUS_FAILED,error="user does not exist"),
@@ -267,8 +269,3 @@ def users(request):
     serialize_instances = UpdateCustomUserSerializer(users,many=True)
     return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),
                     status=status.HTTP_200_OK)
-    
-    
-
-def get_salesforce_user(request):
-    pass

@@ -411,3 +411,592 @@ TypeError: fetch_salesforce_users() takes 0 positional arguments but 1 was given
 2024-01-17 20:32:15,865 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/salesforce/services.py changed, reloading.
 2024-01-17 20:32:32,343 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/salesforce/services.py changed, reloading.
 2024-01-17 20:32:37,579 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/salesforce/services.py changed, reloading.
+2024-01-17 20:42:43,139 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/customers
+2024-01-17 20:42:43,139 - 116-- api_version=2023-10-16 message='Post details' post_data=name=DemoUser03&email=DemoUser03%40gmail.com
+2024-01-17 20:42:43,141 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 20:42:43,738 - 546-- https://api.stripe.com:443 "POST /v1/customers HTTP/1.1" 200 640
+2024-01-17 20:42:43,739 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/customers response_code=200
+2024-01-17 20:42:43,739 - 116-- body='{\n  "id": "cus_PONY6rz9s7z9mu",\n  "object": "customer",\n  "address": null,\n  "balance": 0,\n  "created": 1705504363,\n  "currency": null,\n  "default_source": null,\n  "delinquent": false,\n  "description": null,\n  "discount": null,\n  "email": "DemoUser03@gmail.com",\n  "invoice_prefix": "55675DC8",\n  "invoice_settings": {\n    "custom_fields": null,\n    "default_payment_method": null,\n    "footer": null,\n    "rendering_options": null\n  },\n  "livemode": false,\n  "metadata": {},\n  "name": "DemoUser03",\n  "next_invoice_sequence": 1,\n  "phone": null,\n  "preferred_locales": [],\n  "shipping": null,\n  "tax_exempt": "none",\n  "test_clock": null\n}' message='API response body'
+2024-01-17 20:42:43,740 - 116-- link=https://dashboard.stripe.com/test/logs/req_ILGU0mlzPXdRvS message='Dashboard link for request'
+2024-01-17 20:42:43,753 - 104-- User is created successfully: DemoUser03
+2024-01-17 20:43:59,038 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/customers
+2024-01-17 20:43:59,038 - 116-- api_version=2023-10-16 message='Post details' post_data=name=xan&email=xaniror150%40wuzak.com
+2024-01-17 20:43:59,039 - 292-- Resetting dropped connection: api.stripe.com
+2024-01-17 20:43:59,649 - 546-- https://api.stripe.com:443 "POST /v1/customers HTTP/1.1" 200 633
+2024-01-17 20:43:59,650 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/customers response_code=200
+2024-01-17 20:43:59,650 - 116-- body='{\n  "id": "cus_PONZ9ZBKsBT1Wk",\n  "object": "customer",\n  "address": null,\n  "balance": 0,\n  "created": 1705504439,\n  "currency": null,\n  "default_source": null,\n  "delinquent": false,\n  "description": null,\n  "discount": null,\n  "email": "xaniror150@wuzak.com",\n  "invoice_prefix": "F60204CB",\n  "invoice_settings": {\n    "custom_fields": null,\n    "default_payment_method": null,\n    "footer": null,\n    "rendering_options": null\n  },\n  "livemode": false,\n  "metadata": {},\n  "name": "xan",\n  "next_invoice_sequence": 1,\n  "phone": null,\n  "preferred_locales": [],\n  "shipping": null,\n  "tax_exempt": "none",\n  "test_clock": null\n}' message='API response body'
+2024-01-17 20:43:59,650 - 116-- link=https://dashboard.stripe.com/test/logs/req_Dbha02niAqVsXX message='Dashboard link for request'
+2024-01-17 20:56:27,160 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 20:56:36,417 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 20:56:38,571 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 21:00:02,584 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 21:00:07,766 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 21:00:36,607 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-01-17 21:04:54,344 - 83-- error occured while updating the user as 
+2024-01-17 22:21:15,537 - 241-- Unauthorized: /api/payments/create_plan/
+2024-01-17 22:22:00,659 - 241-- Method Not Allowed: /api/payments/create_plan/
+2024-01-17 22:22:06,161 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:22:06,161 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=12&default_price_data[unit_amount]=1600
+2024-01-17 22:22:06,163 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:22:06,858 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 400 275
+2024-01-17 22:22:06,859 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=400
+2024-01-17 22:22:06,859 - 116-- body='{\n  "error": {\n    "message": "The interval_count for yearly prices can\'t be greater than 1",\n    "param": "recurring[interval_count]",\n    "request_log_url": "https://dashboard.stripe.com/test/logs/req_LZwbQYd6X9S0ld?t=1705510326",\n    "type": "invalid_request_error"\n  }\n}\n' message='API response body'
+2024-01-17 22:22:06,860 - 116-- link=https://dashboard.stripe.com/test/logs/req_LZwbQYd6X9S0ld message='Dashboard link for request'
+2024-01-17 22:22:06,860 - 123-- error_code=None error_message="The interval_count for yearly prices can't be greater than 1" error_param=recurring[interval_count] error_type=invalid_request_error message='Stripe API error received'
+2024-01-17 22:22:06,886 - 241-- Internal Server Error: /api/payments/create_plan/
+Traceback (most recent call last):
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/django/views/decorators/csrf.py", line 56, in wrapper_view
+    return view_func(*args, **kwargs)
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/rest_framework/views.py", line 511, in dispatch
+    self.response = self.finalize_response(request, response, *args, **kwargs)
+  File "/home/dell/Desktop/python training/Django Rest Framework/project05/env/lib/python3.8/site-packages/rest_framework/views.py", line 423, in finalize_response
+    assert isinstance(response, HttpResponseBase), (
+AssertionError: Expected a `Response`, `HttpResponse` or `HttpStreamingResponse` to be returned from the view, but received a `<class 'NoneType'>`
+2024-01-17 22:22:27,552 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:32,168 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:34,739 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:42,160 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:46,799 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:52,281 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:22:54,961 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:23:00,587 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:23:06,640 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:23:06,640 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=12&default_price_data[unit_amount]=1600
+2024-01-17 22:23:06,644 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:23:07,269 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 400 275
+2024-01-17 22:23:07,270 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=400
+2024-01-17 22:23:07,270 - 116-- body='{\n  "error": {\n    "message": "The interval_count for yearly prices can\'t be greater than 1",\n    "param": "recurring[interval_count]",\n    "request_log_url": "https://dashboard.stripe.com/test/logs/req_a7Op7jZLPcC9q0?t=1705510387",\n    "type": "invalid_request_error"\n  }\n}\n' message='API response body'
+2024-01-17 22:23:07,270 - 116-- link=https://dashboard.stripe.com/test/logs/req_a7Op7jZLPcC9q0 message='Dashboard link for request'
+2024-01-17 22:23:07,270 - 123-- error_code=None error_message="The interval_count for yearly prices can't be greater than 1" error_param=recurring[interval_count] error_type=invalid_request_error message='Stripe API error received'
+2024-01-17 22:23:21,587 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:23:23,547 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:23:23,548 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=1600
+2024-01-17 22:23:23,551 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:23:24,168 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 476
+2024-01-17 22:23:24,169 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:23:24,169 - 116-- body='{\n  "id": "prod_POPB5Q3K8RyaZI",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705510404,\n  "default_price": "price_1OZcMiSCy3EZVvJQWOXonQkX",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705510404,\n  "url": null\n}' message='API response body'
+2024-01-17 22:23:24,170 - 116-- link=https://dashboard.stripe.com/test/logs/req_Pa0Lgw5CjLL3mg message='Dashboard link for request'
+2024-01-17 22:30:09,888 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:30:20,496 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:30:20,497 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount_decimal]=1600.0
+2024-01-17 22:30:20,500 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:30:21,564 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 476
+2024-01-17 22:30:21,565 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:30:21,565 - 116-- body='{\n  "id": "prod_POPIK5pN6HA1rk",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705510821,\n  "default_price": "price_1OZcTRSCy3EZVvJQ5s6sDKTK",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705510821,\n  "url": null\n}' message='API response body'
+2024-01-17 22:30:21,565 - 116-- link=https://dashboard.stripe.com/test/logs/req_NMQP0YP3ZHJYtd message='Dashboard link for request'
+2024-01-17 22:31:26,252 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:31:28,387 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:32:16,595 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:34:51,771 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:34:54,715 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:35:02,134 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:35:06,558 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:35:27,707 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:35:30,124 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:35:32,559 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:39:53,219 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:40:01,103 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:40:01,103 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=160000.0
+2024-01-17 22:40:01,108 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:40:06,759 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 400 367
+2024-01-17 22:40:06,760 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=400
+2024-01-17 22:40:06,760 - 116-- body='{\n  "error": {\n    "code": "parameter_invalid_integer",\n    "doc_url": "https://stripe.com/docs/error-codes/parameter-invalid-integer",\n    "message": "Invalid integer: 160000.0",\n    "param": "default_price_data[unit_amount]",\n    "request_log_url": "https://dashboard.stripe.com/test/logs/req_KFIHhz3RAUBgWU?t=1705511406",\n    "type": "invalid_request_error"\n  }\n}\n' message='API response body'
+2024-01-17 22:40:06,760 - 116-- link=https://dashboard.stripe.com/test/logs/req_KFIHhz3RAUBgWU message='Dashboard link for request'
+2024-01-17 22:40:06,760 - 123-- error_code=parameter_invalid_integer error_message='Invalid integer: 160000.0' error_param=default_price_data[unit_amount] error_type=invalid_request_error message='Stripe API error received'
+2024-01-17 22:40:16,507 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:40:16,507 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=160000
+2024-01-17 22:40:16,993 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 476
+2024-01-17 22:40:16,994 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:40:16,994 - 116-- body='{\n  "id": "prod_POPRtZpchZC2G4",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705511416,\n  "default_price": "price_1OZcd2SCy3EZVvJQtkOSZh3J",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705511417,\n  "url": null\n}' message='API response body'
+2024-01-17 22:40:16,994 - 116-- link=https://dashboard.stripe.com/test/logs/req_nZoy0EY7f7PTGe message='Dashboard link for request'
+2024-01-17 22:40:50,866 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:41:00,928 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:41:06,128 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:41:09,643 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:41:27,056 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-17 22:44:39,190 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:47:18,173 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:47:20,282 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:47:28,595 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:47:31,730 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:47:33,857 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/models.py changed, reloading.
+2024-01-17 22:48:17,205 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:03,262 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:22,717 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:24,868 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:33,307 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:36,443 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:39,580 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:49:44,949 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:01,414 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:05,500 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:08,577 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:10,767 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:21,149 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:43,856 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:46,234 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:50:52,574 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:51:01,951 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:51:04,050 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 22:51:35,218 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:51:35,218 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=49900
+2024-01-17 22:51:35,220 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-17 22:51:36,015 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 476
+2024-01-17 22:51:36,016 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:51:36,016 - 116-- body='{\n  "id": "prod_POPds2BbBUQUB1",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705512096,\n  "default_price": "price_1OZco0SCy3EZVvJQYyUGCOGp",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705512096,\n  "url": null\n}' message='API response body'
+2024-01-17 22:51:36,017 - 116-- link=https://dashboard.stripe.com/test/logs/req_wfKluR5Q9T7Lt8 message='Dashboard link for request'
+2024-01-17 22:53:17,367 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:53:17,367 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Premium&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=999
+2024-01-17 22:53:17,368 - 292-- Resetting dropped connection: api.stripe.com
+2024-01-17 22:53:18,035 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 475
+2024-01-17 22:53:18,036 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:53:18,036 - 116-- body='{\n  "id": "prod_POPe8x4WoCEnJF",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705512198,\n  "default_price": "price_1OZcpeSCy3EZVvJQE8kQBFPM",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Premium",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705512198,\n  "url": null\n}' message='API response body'
+2024-01-17 22:53:18,036 - 116-- link=https://dashboard.stripe.com/test/logs/req_WhxFj59aBOci1v message='Dashboard link for request'
+2024-01-17 22:53:39,292 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:53:39,292 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Enterprise&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=149900
+2024-01-17 22:53:39,638 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 478
+2024-01-17 22:53:39,639 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:53:39,639 - 116-- body='{\n  "id": "prod_POPfCE4Bj2JWjM",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705512219,\n  "default_price": "price_1OZcpzSCy3EZVvJQtaFG6iRb",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Enterprise",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705512219,\n  "url": null\n}' message='API response body'
+2024-01-17 22:53:39,639 - 116-- link=https://dashboard.stripe.com/test/logs/req_qqZeerSRWDhNI3 message='Dashboard link for request'
+2024-01-17 22:54:04,043 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:54:04,043 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Premium&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=99900
+2024-01-17 22:54:04,519 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 475
+2024-01-17 22:54:04,520 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:54:04,520 - 116-- body='{\n  "id": "prod_POPfJ4K9MXNOKe",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705512244,\n  "default_price": "price_1OZcqOSCy3EZVvJQEhm9MCBX",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Premium",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705512244,\n  "url": null\n}' message='API response body'
+2024-01-17 22:54:04,520 - 116-- link=https://dashboard.stripe.com/test/logs/req_p1U7Db1Vt7C355 message='Dashboard link for request'
+2024-01-17 22:57:00,126 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-17 22:57:00,126 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Premium&default_price_data[currency]=inr&default_price_data[recurring][interval]=year&default_price_data[recurring][interval_count]=1&default_price_data[unit_amount]=99900
+2024-01-17 22:57:00,127 - 292-- Resetting dropped connection: api.stripe.com
+2024-01-17 22:57:00,637 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 475
+2024-01-17 22:57:00,638 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-17 22:57:00,638 - 116-- body='{\n  "id": "prod_POPif3wTIGyG2h",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705512420,\n  "default_price": "price_1OZctESCy3EZVvJQCGIIFXDS",\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Premium",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705512420,\n  "url": null\n}' message='API response body'
+2024-01-17 22:57:00,639 - 116-- link=https://dashboard.stripe.com/test/logs/req_ukBylSpNxOF97Q message='Dashboard link for request'
+2024-01-17 22:59:17,902 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-17 22:59:24,195 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-17 23:00:38,755 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-17 23:00:47,205 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-17 23:01:08,924 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-17 23:01:38,726 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:01:41,001 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:03:00,710 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:03:11,980 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:03:19,284 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:03:22,588 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:08:19,954 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:08:24,432 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:11:02,977 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:11:05,382 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:14:45,665 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:14:47,753 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:15:11,249 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:15:37,696 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:05,423 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:15,690 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:22,709 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:25,670 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:27,754 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:33,743 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:35,940 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:38,999 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:41,163 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:43,316 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:45,463 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:52,581 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:17:56,664 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:18:28,327 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:18:30,569 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:19:24,708 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:19:29,883 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:19:33,937 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:19:54,202 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:20:00,360 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:20:12,598 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:20:14,577 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:20:49,290 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:14,275 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:17,618 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:24,647 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:28,046 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:34,413 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:36,521 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:48,802 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:52,071 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:22:59,402 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:23:33,223 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:23:35,483 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:23:41,837 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:23:49,030 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:23:52,197 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:24:00,404 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:24:48,250 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:24:51,402 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:25:05,848 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:25:08,000 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:25:11,243 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:25:13,288 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-17 23:34:20,628 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:02,126 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:04,325 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:35,921 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:43,159 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:45,235 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:07:53,283 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:08:52,541 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:08:55,756 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:09:22,256 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:09:25,298 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:06,061 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:10,165 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:13,182 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:17,294 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:21,285 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:29,486 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:33,685 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:45,776 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:47,995 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:51,998 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:10:59,156 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:11:02,408 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:11:17,693 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:11:22,770 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:02,396 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:23,910 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:28,029 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:30,189 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:32,361 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:54,757 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:12:58,059 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 00:13:02,337 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:34:05,296 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:34:10,360 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:35:13,377 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:36:33,863 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:37:01,280 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:37:10,557 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:37:56,402 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:41:10,991 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:41:15,285 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:06,844 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:20,086 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:23,130 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:39,731 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:41,835 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:46,937 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:43:58,927 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:04,085 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:11,235 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:14,257 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:16,388 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:18,411 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:21,476 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:41,825 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:45,953 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:51,157 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:44:54,218 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:00,445 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:04,505 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:06,556 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:15,798 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:29,837 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:40,224 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:42,307 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:45:44,345 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:48:13,850 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:48:22,021 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:49:42,330 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:50:38,145 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:00,468 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:07,715 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:13,937 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:23,146 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:46,486 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:53,564 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:51:56,893 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:01,043 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:04,177 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:07,252 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:09,301 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:13,336 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:15,413 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:19,564 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:22,618 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:30,717 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:52:38,817 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:52:42,068 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/models.py changed, reloading.
+2024-01-18 01:53:25,479 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:53:28,751 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:53:31,880 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:53:34,088 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:53:39,219 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:54:14,788 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 01:54:18,937 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:06,429 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:22,844 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:26,967 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:28,966 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:32,995 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:36,022 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:38,113 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:42,419 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:45,594 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:49,703 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:04:51,879 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:06:28,200 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:06:47,739 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:07:47,143 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:07:54,441 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:07:56,674 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:09:00,176 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:09:04,337 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:09:08,478 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:09:35,204 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:09:37,336 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:06,754 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:15,062 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:17,180 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:24,354 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:30,774 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:35,795 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:39,998 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:47,244 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:49,322 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:21:54,452 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:22:00,672 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:22:02,855 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:22:07,025 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:22:09,214 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:22:21,528 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:24:57,316 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:25:02,411 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:18,923 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:23,054 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:26,087 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:40,286 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:43,288 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:50,307 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:52,309 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:57,409 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:26:59,367 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:08,593 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:11,582 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:15,632 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:27,861 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:31,862 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:35,819 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:42,901 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:27:57,142 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:28:01,270 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:28:03,260 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:28:08,320 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:28:57,502 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:29:01,647 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:29:04,653 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:29:06,830 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:29:36,542 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:30:09,338 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:30:13,506 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:30:15,551 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:30:41,138 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:30:57,631 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:03,934 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:09,140 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:12,260 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:15,329 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:20,518 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:34,903 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:36,972 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:47,283 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:54,587 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:31:56,684 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:04,928 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:08,016 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:29,566 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:31,652 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:34,762 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:41,116 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:48,318 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:51,492 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:56,546 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:32:59,648 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:04,724 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:09,792 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:15,885 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:17,984 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:20,125 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:26,208 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:33:55,980 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:00,280 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:02,311 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:06,388 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:13,544 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:26,936 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:29,097 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:34:51,734 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:35:01,041 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:35:04,258 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:35:12,580 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:10,971 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:17,333 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:21,446 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:23,606 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:32,767 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:37,052 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:48,374 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:54,524 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:36:57,520 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:19,962 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:24,955 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:31,098 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:43,466 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:46,657 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:37:50,921 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:43:25,094 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:44:49,421 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:44:53,102 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:45:00,418 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:45:35,541 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:45:42,741 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:45:54,149 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:45:56,464 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:01,739 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:04,980 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:27,693 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:29,919 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:36,299 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:46:38,449 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:23,273 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:29,518 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:31,782 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:33,976 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:44,345 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:48,495 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:48:54,712 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:18,511 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:27,845 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:31,218 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:35,434 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:40,747 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:44,995 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:50,254 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:52,570 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:49:56,900 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:01,278 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:04,320 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:07,471 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:13,730 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:17,137 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:23,521 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:26,819 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:36,149 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:38,534 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:50:53,980 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:51:01,284 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:51:03,465 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:51:19,645 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-18 02:51:19,646 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard
+2024-01-18 02:51:19,657 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-18 02:51:20,209 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 448
+2024-01-18 02:51:20,211 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-18 02:51:20,211 - 116-- body='{\n  "id": "prod_POTVnohZpQZCvi",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705526480,\n  "default_price": null,\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705526480,\n  "url": null\n}' message='API response body'
+2024-01-18 02:51:20,213 - 116-- link=https://dashboard.stripe.com/test/logs/req_j19lyaHjLvbL43 message='Dashboard link for request'
+2024-01-18 02:51:49,948 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/prices
+2024-01-18 02:51:49,948 - 116-- api_version=2023-10-16 message='Post details' post_data=currency=inr&unit_amount=29900&recurring[interval]=month&recurring[interval_count]=1&product=prod_POTVnohZpQZCvi
+2024-01-18 02:51:50,364 - 546-- https://api.stripe.com:443 "POST /v1/prices HTTP/1.1" 200 635
+2024-01-18 02:51:50,364 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/prices response_code=200
+2024-01-18 02:51:50,365 - 116-- body='{\n  "id": "price_1OZgYUSCy3EZVvJQLnXmiGuK",\n  "object": "price",\n  "active": true,\n  "billing_scheme": "per_unit",\n  "created": 1705526510,\n  "currency": "inr",\n  "custom_unit_amount": null,\n  "livemode": false,\n  "lookup_key": null,\n  "metadata": {},\n  "nickname": null,\n  "product": "prod_POTVnohZpQZCvi",\n  "recurring": {\n    "aggregate_usage": null,\n    "interval": "month",\n    "interval_count": 1,\n    "trial_period_days": null,\n    "usage_type": "licensed"\n  },\n  "tax_behavior": "unspecified",\n  "tiers_mode": null,\n  "transform_quantity": null,\n  "type": "recurring",\n  "unit_amount": 29900,\n  "unit_amount_decimal": "29900"\n}' message='API response body'
+2024-01-18 02:51:50,365 - 116-- link=https://dashboard.stripe.com/test/logs/req_7ZXLiSs7v7wStu message='Dashboard link for request'
+2024-01-18 02:51:50,366 - 151-- error occured SubscriptionPlan() got unexpected keyword arguments: 'Product'
+2024-01-18 02:51:50,367 - 241-- Bad Request: /api/payments/create_subscription_product/
+2024-01-18 02:52:53,791 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 02:53:09,647 - 241-- Not Found: /
+2024-01-18 02:53:09,757 - 241-- Not Found: /favicon.ico
+2024-01-18 02:53:46,350 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/admin.py changed, reloading.
+2024-01-18 02:55:55,581 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/admin.py changed, reloading.
+2024-01-18 02:55:57,675 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/admin.py changed, reloading.
+2024-01-18 02:58:05,210 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/products
+2024-01-18 02:58:05,210 - 116-- api_version=2023-10-16 message='Post details' post_data=name=Standard
+2024-01-18 02:58:05,213 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-18 02:58:05,895 - 546-- https://api.stripe.com:443 "POST /v1/products HTTP/1.1" 200 448
+2024-01-18 02:58:05,896 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/products response_code=200
+2024-01-18 02:58:05,896 - 116-- body='{\n  "id": "prod_POTbjgJ2V3uF6l",\n  "object": "product",\n  "active": true,\n  "attributes": [],\n  "created": 1705526885,\n  "default_price": null,\n  "description": null,\n  "features": [],\n  "images": [],\n  "livemode": false,\n  "metadata": {},\n  "name": "Standard",\n  "package_dimensions": null,\n  "shippable": null,\n  "statement_descriptor": null,\n  "tax_code": null,\n  "type": "service",\n  "unit_label": null,\n  "updated": 1705526885,\n  "url": null\n}' message='API response body'
+2024-01-18 02:58:05,897 - 116-- link=https://dashboard.stripe.com/test/logs/req_6BS3gBl94WWCtz message='Dashboard link for request'
+2024-01-18 02:58:05,910 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/prices
+2024-01-18 02:58:05,911 - 116-- api_version=2023-10-16 message='Post details' post_data=currency=inr&unit_amount=29900&recurring[interval]=month&recurring[interval_count]=1&product=prod_POTbjgJ2V3uF6l
+2024-01-18 02:58:06,203 - 546-- https://api.stripe.com:443 "POST /v1/prices HTTP/1.1" 200 635
+2024-01-18 02:58:06,204 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/prices response_code=200
+2024-01-18 02:58:06,204 - 116-- body='{\n  "id": "price_1OZgeYSCy3EZVvJQVvYbDdXp",\n  "object": "price",\n  "active": true,\n  "billing_scheme": "per_unit",\n  "created": 1705526886,\n  "currency": "inr",\n  "custom_unit_amount": null,\n  "livemode": false,\n  "lookup_key": null,\n  "metadata": {},\n  "nickname": null,\n  "product": "prod_POTbjgJ2V3uF6l",\n  "recurring": {\n    "aggregate_usage": null,\n    "interval": "month",\n    "interval_count": 1,\n    "trial_period_days": null,\n    "usage_type": "licensed"\n  },\n  "tax_behavior": "unspecified",\n  "tiers_mode": null,\n  "transform_quantity": null,\n  "type": "recurring",\n  "unit_amount": 29900,\n  "unit_amount_decimal": "29900"\n}' message='API response body'
+2024-01-18 02:58:06,204 - 116-- link=https://dashboard.stripe.com/test/logs/req_BVhTg4BxssV8UI message='Dashboard link for request'
+2024-01-18 02:58:06,213 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/prices
+2024-01-18 02:58:06,213 - 116-- api_version=2023-10-16 message='Post details' post_data=currency=inr&unit_amount=79900&recurring[interval]=month&recurring[interval_count]=3&product=prod_POTbjgJ2V3uF6l
+2024-01-18 02:58:06,511 - 546-- https://api.stripe.com:443 "POST /v1/prices HTTP/1.1" 200 635
+2024-01-18 02:58:06,512 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/prices response_code=200
+2024-01-18 02:58:06,512 - 116-- body='{\n  "id": "price_1OZgeYSCy3EZVvJQ2dtlq8XG",\n  "object": "price",\n  "active": true,\n  "billing_scheme": "per_unit",\n  "created": 1705526886,\n  "currency": "inr",\n  "custom_unit_amount": null,\n  "livemode": false,\n  "lookup_key": null,\n  "metadata": {},\n  "nickname": null,\n  "product": "prod_POTbjgJ2V3uF6l",\n  "recurring": {\n    "aggregate_usage": null,\n    "interval": "month",\n    "interval_count": 3,\n    "trial_period_days": null,\n    "usage_type": "licensed"\n  },\n  "tax_behavior": "unspecified",\n  "tiers_mode": null,\n  "transform_quantity": null,\n  "type": "recurring",\n  "unit_amount": 79900,\n  "unit_amount_decimal": "79900"\n}' message='API response body'
+2024-01-18 02:58:06,512 - 116-- link=https://dashboard.stripe.com/test/logs/req_PzQfNQ4xwwWBbx message='Dashboard link for request'
+2024-01-18 02:58:06,520 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/prices
+2024-01-18 02:58:06,520 - 116-- api_version=2023-10-16 message='Post details' post_data=currency=inr&unit_amount=279900&recurring[interval]=month&recurring[interval_count]=12&product=prod_POTbjgJ2V3uF6l
+2024-01-18 02:58:06,921 - 546-- https://api.stripe.com:443 "POST /v1/prices HTTP/1.1" 200 638
+2024-01-18 02:58:06,921 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/prices response_code=200
+2024-01-18 02:58:06,922 - 116-- body='{\n  "id": "price_1OZgeYSCy3EZVvJQqFtwhiuB",\n  "object": "price",\n  "active": true,\n  "billing_scheme": "per_unit",\n  "created": 1705526886,\n  "currency": "inr",\n  "custom_unit_amount": null,\n  "livemode": false,\n  "lookup_key": null,\n  "metadata": {},\n  "nickname": null,\n  "product": "prod_POTbjgJ2V3uF6l",\n  "recurring": {\n    "aggregate_usage": null,\n    "interval": "month",\n    "interval_count": 12,\n    "trial_period_days": null,\n    "usage_type": "licensed"\n  },\n  "tax_behavior": "unspecified",\n  "tiers_mode": null,\n  "transform_quantity": null,\n  "type": "recurring",\n  "unit_amount": 279900,\n  "unit_amount_decimal": "279900"\n}' message='API response body'
+2024-01-18 02:58:06,922 - 116-- link=https://dashboard.stripe.com/test/logs/req_KLsE7JyMm3ZA1m message='Dashboard link for request'
+2024-01-18 03:00:24,327 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:00:27,281 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:00:32,442 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:02:38,570 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-18 03:02:43,662 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-18 03:02:47,701 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/urls.py changed, reloading.
+2024-01-18 03:07:52,817 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:07:57,988 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:07:59,984 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:02,026 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:03,985 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:06,016 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:09,140 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:14,190 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:08:17,232 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:15:55,350 - 241-- Not Found: /
+2024-01-18 03:42:18,606 - 178-- error occuured while creating subscription for user User matching query does not exist.
+2024-01-18 03:42:18,612 - 241-- Bad Request: /api/payments/create_subscription/
+2024-01-18 03:43:17,318 - 178-- error occuured while creating subscription for user 'NoneType' object has no attribute 'product_id'
+2024-01-18 03:43:17,319 - 241-- Bad Request: /api/payments/create_subscription/
+2024-01-18 03:44:01,545 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:44:04,966 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/subscriptions
+2024-01-18 03:44:04,967 - 116-- api_version=2023-10-16 message='Post details' post_data=customer=cus_PHFYlU63goBEvF&collection_method=send_invoice&items[0][price]=price_1OZgeYSCy3EZVvJQVvYbDdXp&items[0][product]=prod_POTbjgJ2V3uF6l
+2024-01-18 03:44:04,970 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-18 03:44:05,523 - 546-- https://api.stripe.com:443 "POST /v1/subscriptions HTTP/1.1" 400 357
+2024-01-18 03:44:05,524 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/subscriptions response_code=400
+2024-01-18 03:44:05,525 - 116-- body='{\n  "error": {\n    "code": "parameter_unknown",\n    "doc_url": "https://stripe.com/docs/error-codes/parameter-unknown",\n    "message": "Received unknown parameter: items[0][product]",\n    "param": "items[0][product]",\n    "request_log_url": "https://dashboard.stripe.com/test/logs/req_1xZklCj2Ps5yMj?t=1705529645",\n    "type": "invalid_request_error"\n  }\n}\n' message='API response body'
+2024-01-18 03:44:05,525 - 116-- link=https://dashboard.stripe.com/test/logs/req_1xZklCj2Ps5yMj message='Dashboard link for request'
+2024-01-18 03:44:05,525 - 123-- error_code=parameter_unknown error_message='Received unknown parameter: items[0][product]' error_param=items[0][product] error_type=invalid_request_error message='Stripe API error received'
+2024-01-18 03:44:05,526 - 178-- error occuured while creating subscription for user Request req_1xZklCj2Ps5yMj: Received unknown parameter: items[0][product]
+2024-01-18 03:44:05,527 - 241-- Bad Request: /api/payments/create_subscription/
+2024-01-18 03:52:30,688 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:52:32,825 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:52:34,942 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:52:42,268 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/subscriptions
+2024-01-18 03:52:42,268 - 116-- api_version=2023-10-16 message='Post details' post_data=customer=cus_PHFYlU63goBEvF&collection_method=send_invoice&items[0][price]=price_1OZgeYSCy3EZVvJQVvYbDdXp
+2024-01-18 03:52:42,269 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-18 03:52:42,755 - 546-- https://api.stripe.com:443 "POST /v1/subscriptions HTTP/1.1" 400 255
+2024-01-18 03:52:42,755 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/subscriptions response_code=400
+2024-01-18 03:52:42,755 - 116-- body='{\n  "error": {\n    "message": "If invoice collection method is \'send_invoice\', you must specify \'days_until_due\'.",\n    "request_log_url": "https://dashboard.stripe.com/test/logs/req_d9KYk1lZP4jUuV?t=1705530162",\n    "type": "invalid_request_error"\n  }\n}\n' message='API response body'
+2024-01-18 03:52:42,756 - 116-- link=https://dashboard.stripe.com/test/logs/req_d9KYk1lZP4jUuV message='Dashboard link for request'
+2024-01-18 03:52:42,756 - 123-- error_code=None error_message="If invoice collection method is 'send_invoice', you must specify 'days_until_due'." error_param=None error_type=invalid_request_error message='Stripe API error received'
+2024-01-18 03:52:42,756 - 178-- error occuured while creating subscription for user Request req_d9KYk1lZP4jUuV: If invoice collection method is 'send_invoice', you must specify 'days_until_due'.
+2024-01-18 03:52:42,757 - 241-- Bad Request: /api/payments/create_subscription/
+2024-01-18 03:54:51,320 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:55:03,655 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:55:09,798 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:55:11,840 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:55:14,952 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/payment/views.py changed, reloading.
+2024-01-18 03:55:18,009 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/subscriptions
+2024-01-18 03:55:18,009 - 116-- api_version=2023-10-16 message='Post details' post_data=customer=cus_PHFYlU63goBEvF&collection_method=send_invoice&items[0][price]=price_1OZgeYSCy3EZVvJQVvYbDdXp&days_until_due=10
+2024-01-18 03:55:18,012 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-01-18 03:55:19,018 - 546-- https://api.stripe.com:443 "POST /v1/subscriptions HTTP/1.1" 200 4055
+2024-01-18 03:55:19,019 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/subscriptions response_code=200
+2024-01-18 03:55:19,019 - 116-- body='{\n  "id": "sub_1OZhXuSCy3EZVvJQXRT7Gcxp",\n  "object": "subscription",\n  "application": null,\n  "application_fee_percent": null,\n  "automatic_tax": {\n    "enabled": false\n  },\n  "billing_cycle_anchor": 1705530318,\n  "billing_cycle_anchor_config": null,\n  "billing_thresholds": null,\n  "cancel_at": null,\n  "cancel_at_period_end": false,\n  "canceled_at": null,\n  "cancellation_details": {\n    "comment": null,\n    "feedback": null,\n    "reason": null\n  },\n  "collection_method": "send_invoice",\n  "created": 1705530318,\n  "currency": "inr",\n  "current_period_end": 1708208718,\n  "current_period_start": 1705530318,\n  "customer": "cus_PHFYlU63goBEvF",\n  "days_until_due": 10,\n  "default_payment_method": null,\n  "default_source": null,\n  "default_tax_rates": [],\n  "description": null,\n  "discount": null,\n  "ended_at": null,\n  "items": {\n    "object": "list",\n    "data": [\n      {\n        "id": "si_POUWMZFgS0wwDt",\n        "object": "subscription_item",\n        "billing_thresholds": null,\n        "created": 1705530319,\n        "metadata": {},\n        "plan": {\n          "id": "price_1OZgeYSCy3EZVvJQVvYbDdXp",\n          "object": "plan",\n          "active": true,\n          "aggregate_usage": null,\n          "amount": 29900,\n          "amount_decimal": "29900",\n          "billing_scheme": "per_unit",\n          "created": 1705526886,\n          "currency": "inr",\n          "interval": "month",\n          "interval_count": 1,\n          "livemode": false,\n          "metadata": {},\n          "nickname": null,\n          "product": "prod_POTbjgJ2V3uF6l",\n          "tiers_mode": null,\n          "transform_usage": null,\n          "trial_period_days": null,\n          "usage_type": "licensed"\n        },\n        "price": {\n          "id": "price_1OZgeYSCy3EZVvJQVvYbDdXp",\n          "object": "price",\n          "active": true,\n          "billing_scheme": "per_unit",\n          "created": 1705526886,\n          "currency": "inr",\n          "custom_unit_amount": null,\n          "livemode": false,\n          "lookup_key": null,\n          "metadata": {},\n          "nickname": null,\n          "product": "prod_POTbjgJ2V3uF6l",\n          "recurring": {\n            "aggregate_usage": null,\n            "interval": "month",\n            "interval_count": 1,\n            "trial_period_days": null,\n            "usage_type": "licensed"\n          },\n          "tax_behavior": "unspecified",\n          "tiers_mode": null,\n          "transform_quantity": null,\n          "type": "recurring",\n          "unit_amount": 29900,\n          "unit_amount_decimal": "29900"\n        },\n        "quantity": 1,\n        "subscription": "sub_1OZhXuSCy3EZVvJQXRT7Gcxp",\n        "tax_rates": []\n      }\n    ],\n    "has_more": false,\n    "total_count": 1,\n    "url": "/v1/subscription_items?subscription=sub_1OZhXuSCy3EZVvJQXRT7Gcxp"\n  },\n  "latest_invoice": "in_1OZhXuSCy3EZVvJQuEGe7uUs",\n  "livemode": false,\n  "metadata": {},\n  "next_pending_invoice_item_invoice": null,\n  "on_behalf_of": null,\n  "pause_collection": null,\n  "payment_settings": {\n    "payment_method_options": null,\n    "payment_method_types": null,\n    "save_default_payment_method": "off"\n  },\n  "pending_invoice_item_interval": null,\n  "pending_setup_intent": null,\n  "pending_update": null,\n  "plan": {\n    "id": "price_1OZgeYSCy3EZVvJQVvYbDdXp",\n    "object": "plan",\n    "active": true,\n    "aggregate_usage": null,\n    "amount": 29900,\n    "amount_decimal": "29900",\n    "billing_scheme": "per_unit",\n    "created": 1705526886,\n    "currency": "inr",\n    "interval": "month",\n    "interval_count": 1,\n    "livemode": false,\n    "metadata": {},\n    "nickname": null,\n    "product": "prod_POTbjgJ2V3uF6l",\n    "tiers_mode": null,\n    "transform_usage": null,\n    "trial_period_days": null,\n    "usage_type": "licensed"\n  },\n  "quantity": 1,\n  "schedule": null,\n  "start_date": 1705530318,\n  "status": "active",\n  "test_clock": null,\n  "transfer_data": null,\n  "trial_end": null,\n  "trial_settings": {\n    "end_behavior": {\n      "missing_payment_method": "create_invoice"\n    }\n  },\n  "trial_start": null\n}' message='API response body'
+2024-01-18 03:55:19,019 - 116-- link=https://dashboard.stripe.com/test/logs/req_3t9jZpCChqj0bb message='Dashboard link for request'
