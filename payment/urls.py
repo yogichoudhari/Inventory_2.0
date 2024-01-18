@@ -7,4 +7,5 @@ urlpatterns = [
     path("payment-history/",views.payment_history),
     path("create_subscription_product/",views.create_subscription_product),
     path("create_subscription/",views.create_subscription),
+    path("modify_subscription/",views.modify_subscription),
 ]

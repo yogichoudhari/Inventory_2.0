@@ -12,6 +12,8 @@ from django.forms.models import model_to_dict
 import stripe
 from inventory_management_system.utils import (send_email,response_template, STATUS_FAILED, 
                                                STATUS_SUCCESS)
+from . import services
+
 from django.conf import settings
 from django_q.tasks import async_task
 import logging
@@ -164,19 +166,47 @@ def create_subscription_product(request):
 @permission_classes([IsAdminUser,IsAuthenticated])
 def create_subscription(request):
     try:
-        user = CustomUser.objects.get(id=request.data.get('user_id'))
-        price = SubscriptionPlan.objects.filter(name=request.data.get('billing')).first()
-        product = Subscription.objects.filter(name=request.data.get('product_name')).first()
-        response = stripe.Subscription.create(
-        customer=user.stripe_id,
-        collection_method="send_invoice",
-        items=[{"price": price.price_id}],
-        days_until_due=10
-        )
+        data = request.data
+        admin_user = CustomUser.objects.get(user=request.user)
+        user = CustomUser.objects.get(id=data['user_id'],account=admin_user.account)
+        response,user = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
+        if id in response:
+            user.subscription_id=response.id
+            user.save()
         return Response(response_template(STATUS_SUCCESS,message="User subscription is created successfully",
                                           response=response),status=status.HTTP_201_CREATED)
     except Exception as e:
         logger.error(f'error occuured while creating subscription for user {str(e)}')
         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),
                         status=status.HTTP_400_BAD_REQUEST)
-        
+
+
+@api_view(["POST"])
+@permission_classes([IsAdminUser,IsAuthenticated])
+def modify_subscription(request):
+    import pdb
+    pdb.set_trace()
+    try:
+        data = request.data
+        admin_user = CustomUser.objects.get(user=request.user)
+        user = CustomUser.objects.get(id=data.get('user_id'),account=admin_user.account)
+        subscription = stripe.Subscription.retrieve(user.subscription_id)
+        if data.get("product_name"):
+            product = Subscription.objects.get(name=data.get("product_name"),account=admin_user.account)
+            plan = SubscriptionPlan.objects.get(name=data.get("billing"),product=product)
+        else:
+            product = Subscription.objects.get(product_id=subscription['items']['data'][0]['price']['product'])
+            plan = SubscriptionPlan.objects.get(name=data.get("billing"),product=product)
+        stripe.Subscription.modify(
+            user.subscription_id,
+            items=[{"id":subscription['items']['data'][0]['id'],"price":plan.price_id}]
+        )
+        return Response(response_template(STATUS_SUCCESS,message="subscription is successfully modified"),
+                        status=status.HTTP_201_CREATED)
+    
+    except Exception as e:
+        logger.error(f'error occured while modifiying subscription: {str(e)}')
+        return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),
+                        status=status.HTTP_400_BAD_REQUEST)
+
+

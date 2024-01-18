@@ -17,11 +17,13 @@ from inventory_management_system.utils import (get_tokens_for_user,
                                                response_template)
 from django_q.tasks import async_task
 from .services import grant_permission
+from payment.services import assign_subscription_to_user
 from decouple import config
 import stripe
 import json
 import pdb
 import logging
+
 # Create your views here.
 
 
@@ -99,7 +101,11 @@ def create_user(request):
             # Update the user instance with the Stripe ID
             created_user_instance.stripe_id = customer_stripe_response.id
             created_user_instance.save()
-
+            
+            if user_data['subscription']:
+                response,user = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing'],user_data['subscription']['product_name'])
+                created_user_instance.subscription_id = response.id
+                created_user_instance.save()
             # Log user creation success
             logger.info(f"User is created successfully: {created_user_instance}")
 
