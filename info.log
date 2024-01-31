@@ -25,3 +25,15 @@
 2024-01-18 22:09:36,245 - ERROR - views - error occured while modifiying subscription: Request req_CrvO3DKCF5s1GE: All prices on a subscription must have the same `recurring.interval` and `recurring.interval_count`. If you meant to update an existing subscription item instead of creating a new one, make sure to include the subscription item ID in your request. See examples at https://stripe.com/docs/billing/subscriptions/upgrade-downgrade#changing.
 2024-01-18 22:44:52,294 - ERROR - views - error occured while modifiying subscription: Subscription matching query does not exist.
 2024-01-18 22:46:06,028 - ERROR - views - error occured while modifiying subscription: Subscription matching query does not exist.
+2024-01-30 23:20:52,951 - ERROR - views - error occured create_coupon() missing 1 required positional argument: 'name'
+2024-01-30 23:36:25,707 - ERROR - services - error occuured while creating subscription for user Request req_jrzrmRJpEWTltl: The product prod_POTbjgJ2V3uF6l is marked as inactive, and thus no new subscriptions can be create to any plans of this product. You provided the plan price_1OZgeYSCy3EZVvJQVvYbDdXp.
+2024-01-30 23:36:25,707 - ERROR - views - error occuured while creating subscription for user cannot unpack non-iterable NoneType object
+2024-01-31 21:19:13,395 - ERROR - services - error occuured while creating subscription for user Cannot resolve keyword 'name' into field. Choices are: coupon_id, id, subscription, subscription_id
+2024-01-31 21:19:13,402 - ERROR - views - error occuured while creating subscription for user cannot unpack non-iterable NoneType object
+2024-01-31 23:08:45,546 - ERROR - views - error occuured while creating subscription for user Tried to update field user.User.coupon_id with a model instance, <Coupon: Coupon object (3)>. Use a value compatible with CharField.
+2024-01-31 23:15:43,371 - ERROR - services - error occuured while creating subscription for user Request req_is9uZMyCQSmp2r: The product prod_PTf4g9Bi3OyREu is marked as inactive, and thus no new subscriptions can be create to any plans of this product. You provided the plan price_1OehjwSCy3EZVvJQyziwTfFB.
+2024-01-31 23:15:43,372 - ERROR - views - error occuured while creating subscription for user cannot unpack non-iterable NoneType object
+2024-01-31 23:41:59,804 - ERROR - views - error occured duplicate key value violates unique constraint "payment_subscription_name_2f8a5662_uniq"
+DETAIL:  Key (name)=(Enterprise) already exists.
+
+2024-01-31 23:57:28,366 - ERROR - views - error occuured while creating subscription for user User matching query does not exist.

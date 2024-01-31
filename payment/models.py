@@ -29,7 +29,12 @@ class SubscriptionPlan(models.Model):
 
 class Subscription(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,unique=True)
     product_id = models.CharField(max_length=100)
 
+    
+ 
+class Coupon(models.Model):
+    coupon_id = models.CharField(max_length=15)
+    subscription = models.OneToOneField(Subscription,on_delete=models.CASCADE)
     

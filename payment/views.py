@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from product.models import Product
-from .models import PaymentLog, Subscription, SubscriptionPlan
+from .models import PaymentLog, Subscription, SubscriptionPlan, Coupon
 from user.models import User as CustomUser
 from .serializers import (PaymentLogSerializer)
 from django.forms.models import model_to_dict
@@ -154,6 +154,9 @@ def create_subscription_product(request):
             )
             SubscriptionPlan.objects.create(name=plan['interval'],price_id=price_obj.id,
                                             product=subscription_product)
+        percent_off = request.data.get('percent_off')
+        coupon_id = services.create_coupon(percent_off)
+        Coupon.objects.create(coupon_id=coupon_id,subscription=subscription_product)
         return Response(response_template(STATUS_SUCCESS,message="Subscription product and its prices are created successfully"),
                         status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -165,14 +168,16 @@ def create_subscription_product(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def create_subscription(request):
+    import pdb
+    pdb.set_trace()
     try:
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)
         user = CustomUser.objects.get(id=data['user_id'],account=admin_user.account)
-        response,user = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
-        if id in response:
-            user.subscription_id=response.id
-            user.save()
+        response,user,coupon_id = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
+        user.subscription_id=response.id
+        user.coupon_id = coupon_id
+        user.save()
         return Response(response_template(STATUS_SUCCESS,message="User subscription is created successfully",
                                           response=response),status=status.HTTP_201_CREATED)
     except Exception as e:
@@ -184,8 +189,6 @@ def create_subscription(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def modify_subscription(request):
-    import pdb
-    pdb.set_trace()
     try:
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)
@@ -209,4 +212,8 @@ def modify_subscription(request):
         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),
                         status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(["POST"])
+@permission_classes([IsAdminUser,IsAuthenticated])
+def cancel_subscription(request):
+    pass
 

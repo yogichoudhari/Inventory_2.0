@@ -18,4 +18,4 @@ class PermissionAdmin(admin.ModelAdmin):
 class UserAdmin(admin.ModelAdmin):
     list_display=["id", "user", "phone", "roll", "state", "city",
                    "account","stripe_id",
-                   "is_verified"]
+                   "is_verified","subscription_id"]

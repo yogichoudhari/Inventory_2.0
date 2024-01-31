@@ -222,6 +222,7 @@ def make_purchase(request, id):
             },
             "quantity":quantity}
         ],
+        discounts=[{"coupon":user.coupon_id}],
         metadata={
                 "product_id":product_id,
                 "product_quantity":quantity,

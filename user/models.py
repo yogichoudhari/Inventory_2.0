@@ -81,8 +81,9 @@ class User(models.Model):
     city = models.CharField(choices=cities,max_length=50)
     state = models.CharField(choices=state_choices, max_length=35)
     account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)
-    permissions = models.ManyToManyField(Permission,related_name="permission")
-    subscription_id = models.CharField(max_length=50,null=True)
+    permissions = models.ManyToManyField(Permission,related_name="permission",blank=True)
+    subscription_id = models.CharField(max_length=50,null=True,blank=True)
+    coupon_id = models.CharField(max_length=33,null=True,blank=True)
     stripe_id = models.CharField(max_length=55,null=True)
     is_verified = models.BooleanField(default=False)
     def __str__(self):
@@ -95,7 +96,7 @@ def delete_builtin_user(sender,instance,**kwargs):
 
 class Account(models.Model):
     admin = models.OneToOneField(User,on_delete=models.CASCADE,related_name='related_account')
-    name = models.CharField(max_length=33,null=False,blank=False)
+    name = models.CharField(max_length=33,null=False,blank=False,unique=True)
     logo = models.BinaryField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True,blank=True)
