@@ -14,10 +14,11 @@ from .serializers import (CustomUserSerializer,
 from django.core.cache import cache
 from inventory_management_system.utils import (get_tokens_for_user,
                                                send_otp_via_email,
-                                               response_template)
+                                               response_template, send_email)
 from django_q.tasks import async_task
 from .services import grant_permission
 from payment.services import assign_subscription_to_user
+from datetime import datetime
 from decouple import config
 import stripe
 import json
@@ -53,7 +54,8 @@ def register_admin(request):
             )
             created_user_instance.stripe_id = customer_stripe_response.id
             created_user_instance.save()
-            async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
+            # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
+            send_otp_via_email(created_user_instance)
             return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),
                             status=status.HTTP_201_CREATED)
         else:
@@ -81,15 +83,22 @@ def create_user(request):
                 return Response(response_template(STATUS_FAILED,
                                  error=f'{e.detail}'),
                                 status=status.HTTP_400_BAD_REQUEST)
-
             # Save the user instance
             created_user_instance = serialized.save()
-
             # Create a Stripe customer
             try:
                 customer_stripe_response = stripe.Customer.create(
                     name=created_user_instance.user.username,
                     email=created_user_instance.user.email
+                )
+                pm = stripe.PaymentMethod.create(
+                  type="card",
+                  card={
+                    "token":"tok_visa"},
+                )   
+                stripe.PaymentMethod.attach(
+                    pm.id,
+                    customer=customer_stripe_response.id,
                 )
             except stripe.error.StripeError as stripe_error:
                 # Log the Stripe error and return a response
@@ -103,8 +112,9 @@ def create_user(request):
             created_user_instance.save()
             
             if user_data['subscription']:
-                response,user = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing'],user_data['subscription']['product_name'])
-                created_user_instance.subscription_id = response.id
+                pdb.set_trace()
+                response,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing'],user_data['subscription']['product_name'])
+                created_user_instance.subscription = subscription_instance  
                 created_user_instance.save()
             # Log user creation success
             logger.info(f"User is created successfully: {created_user_instance}")
@@ -127,8 +137,9 @@ def resend_otp(request):
     try:
         auth_user = User.objects.get(email=email)
         user = CustomUser.objects.get(user=auth_user)
-        async_task("inventory_management_system.utils.send_otp_via_email",user)
-        # send_otp_via_email(user)
+        # async_task("inventory_management_system.utils.send_otp_via_email",user)
+        send_otp_via_email(user)
+        send_otp_via_email(user)
     except Exception as e:
         logger.exception(f"an error occured : that email is incorrect")
         return Response(response_template(STATUS_FAILED,error="user does not exist"),
@@ -140,7 +151,6 @@ def resend_otp(request):
 
 @api_view(['POST'])
 def verify(request):
-    
     otp = request.data.get('otp')
     user_id = cache.get(otp)
     logger.debug(f'Cache keys {cache.keys("*")}')

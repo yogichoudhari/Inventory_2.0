@@ -69,17 +69,21 @@ def fetch_salesforce_users(admin_user):
                 user_dict.update({"username":username,'first_name':first_name,"last_name":last_name,"email":email})
                 users_arr.append(user_dict)
         if users_arr:
-            subject = "Salesforce user synchronization in Application"
-            email = admin_user.user.email
-            context = {"users":users_arr,"admin":admin_user}
-            send_email(subject,email,'salesforce_user.html',context)
+            kwargs = {}
+            kwargs["subject"] = "Salesforce user synchronization in Application"
+            kwargs['email'] = admin_user.user.email
+            kwargs['context'] = {"users":users_arr,"admin":admin_user}
+            kwargs['template_name'] = "salesforce_user.html"
+            send_email(kwargs)
         else:
             logger.info(f'Users are up to date updated')
     except Exception as e:
-        subject = "Salesforce user synchronization in Application"
-        email = admin_user.user.email
-        context = {"error":f'{str(e)}',"admin":admin_user}
-        send_email(subject,email,'salesforce_user.html',context)
+        kwargs = {}
+        kwargs['template_name'] = "salesforce_user.html"
+        kwargs['subject'] = "Salesforce user synchronization in Application"
+        kwargs['email'] = admin_user.user.email
+        kwargs['context'] = {"error":f'{str(e)}',"admin":admin_user}
+        send_email(kwargs)
         logger.error(f'error occured while updating the user as {str(e)}')
             
                         

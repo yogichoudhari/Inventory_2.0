@@ -1,5 +1,5 @@
 from django.db import models
-from user.models import Account, User
+from user.models import Account
 
 
 class Product(models.Model):
@@ -10,7 +10,7 @@ class Product(models.Model):
     actual_price = models.PositiveIntegerField(default=99,null=False,blank=False)
     discounted_price = models.PositiveIntegerField(default=99,null=False,blank=False)
     account = models.ForeignKey(Account,on_delete=models.CASCADE)
-    created_by = models.ForeignKey(User,on_delete=models.CASCADE,null=False)
+    created_by = models.ForeignKey("user.User",on_delete=models.CASCADE,null=False)
 
     def save(self,*args,**kwargs):
         self.category = self.category.title()

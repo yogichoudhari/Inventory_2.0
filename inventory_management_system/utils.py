@@ -6,7 +6,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 
-def send_email(subject, to_email, template_name, context):
+def send_email(context,to_email,template_name,subject):
     html_message = render_to_string(template_name, context)
     text_message = strip_tags(html_message)
     
@@ -26,11 +26,13 @@ def otp_temp_storage(otp,user):
 def send_otp_via_email(user):
     otp = generate_otp()
     otp_temp_storage(otp,user)
-    subject = "Account Verification"
-    to_email = user.user.email
-    context = {'otp':otp,"username":user.user.username,
+    kwargs = {}
+    kwargs["subject"] = "Account Verification"
+    kwargs["to_email"] = user.user.email
+    kwargs['context'] = {'otp':otp,"username":user.user.username,
                "account":user.account.name}
-    send_email(subject,to_email,"email_otp_template.html",context)
+    kwargs["template_name"] = "email_otp_template.html"
+    send_email(kwargs)
 
 
 def get_tokens_for_user(user):

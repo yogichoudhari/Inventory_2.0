@@ -37,3 +37,4 @@
 DETAIL:  Key (name)=(Enterprise) already exists.
 
 2024-01-31 23:57:28,366 - ERROR - views - error occuured while creating subscription for user User matching query does not exist.
+2024-02-06 03:19:33,301 - ERROR - services - error occuured while creating subscription for user fromisoformat: argument must be str

@@ -5,6 +5,7 @@ from indian_cities.dj_city import cities
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 from django.utils import timezone
+# from payment.models import UserSubscriptionDetail 
 state_choices = (("Andhra Pradesh","Andhra Pradesh"),
                  ("Arunachal Pradesh ","Arunachal Pradesh "),
                  ("Assam","Assam"),
@@ -82,8 +83,7 @@ class User(models.Model):
     state = models.CharField(choices=state_choices, max_length=35)
     account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)
     permissions = models.ManyToManyField(Permission,related_name="permission",blank=True)
-    subscription_id = models.CharField(max_length=50,null=True,blank=True)
-    coupon_id = models.CharField(max_length=33,null=True,blank=True)
+    subscription = models.ForeignKey("payment.UserSubscriptionDetail",on_delete=models.SET_NULL,null=True)
     stripe_id = models.CharField(max_length=55,null=True)
     is_verified = models.BooleanField(default=False)
     def __str__(self):
@@ -95,7 +95,7 @@ def delete_builtin_user(sender,instance,**kwargs):
     
 
 class Account(models.Model):
-    admin = models.OneToOneField(User,on_delete=models.CASCADE,related_name='related_account')
+    admin = models.OneToOneField("User",on_delete=models.CASCADE,related_name='related_account')
     name = models.CharField(max_length=33,null=False,blank=False,unique=True)
     logo = models.BinaryField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -35,6 +35,7 @@ def get_auth_token(request):
 @api_view(["POST","GET"])
 def get_salesforce_users(request):
     admin_user = CustomUser.objects.get(user=request.user)
-    # fetch_salesforce_users(admin_user)
-    async_task("salesforce.services.fetch_salesforce_users",admin_user)
+    fetch_salesforce_users(admin_user)
+    # async_task("salesforce.services.fetch_salesforce_users",admin_user)
+    
     return Response(response_template(STATUS_SUCCESS,message="users are being fetched"))

@@ -10,7 +10,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from .models import Product
 from django.contrib.auth.models import User
-from .models import User as CustomUser
+from user.models import User as CustomUser
 from django.contrib import auth
 from .serializers import (ProductSerializer, 
                           SearchedProductListSerializer)
@@ -222,7 +222,7 @@ def make_purchase(request, id):
             },
             "quantity":quantity}
         ],
-        discounts=[{"coupon":user.coupon_id}],
+        discounts=[{"coupon":user.subscription.coupon.coupon_id}],
         metadata={
                 "product_id":product_id,
                 "product_quantity":quantity,

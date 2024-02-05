@@ -1,5 +1,5 @@
 from django.db import models
-from product.models import Product
+# from product.models import Product
 from user.models import User, Account
 
 
@@ -13,7 +13,7 @@ class PaymentLog(models.Model):
     ]
     status = models.CharField(choices=payment_status_choices)
     created_at = models.DateTimeField(auto_now_add=True)
-    product = models.ForeignKey(Product,on_delete=models.SET_NULL,null=True)
+    product = models.ForeignKey("product.Product",on_delete=models.SET_NULL,null=True)
     
 
 
@@ -37,4 +37,16 @@ class Subscription(models.Model):
 class Coupon(models.Model):
     coupon_id = models.CharField(max_length=15)
     subscription = models.OneToOneField(Subscription,on_delete=models.CASCADE)
+
+class UserSubscriptionDetail(models.Model):
+    subscription_id = models.CharField(max_length=30)
+    status_choices = [
+        ("a","active"),
+        ("e","expired")
+    ]
+    coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True)
+    status = models.CharField(choices=status_choices,max_length=35)
+    end_on = models.DateField()
+    billing = models.CharField(max_length=20)
+    name = models.CharField(max_length=35)
     

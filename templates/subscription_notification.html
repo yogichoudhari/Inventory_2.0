@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Activation Notification</title>
+</head>
+<body>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2>Subscription Activation Notification</h2>
+        <p>Dear {{invoice.customer_name}},</p>
+        <p>We are delighted to inform you that your subscription has been successfully activated!</p>
+        <h3>Subscription Details:</h3>
+        <p>Due Date:{{invoice.due_date}}</p>
+        <p>You can view your invoice by clicking on the link <a href={{invoice.hosted_invoice_url}}>click here</a></p>
+        <p>Thank you for choosing our service. If you have any questions or need further assistance, please don't hesitate to contact us.</p>
+        <p>Best regards,<br>Demo</p>
+    </div>
+</body>
+</html>

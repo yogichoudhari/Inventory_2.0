@@ -29,12 +29,15 @@ def payment_success(request,session_id):
         product.quantity = product.quantity-int(session.metadata.get("product_quantity"))
         total_amount = session.amount_total/100
         if product.quantity==0:
-            email = product.created_by.user.email
-            subject = "Inventory Product Stock Notification"
+            kwargs = {}
+            kwargs["email"] = product.created_by.user.email
+            kwargs['subject'] = "Inventory Product Stock Notification"
+            kwargs['template_name'] = "inventory_stock_email.html"
             product_dict = model_to_dict(product)
             product_dict["account"] = product.account.name
-            context = product_dict
-            async_task("inventory_management_system.utils.send_email",subject,email,"inventory_stock_email.html",context)
+            kwargs["context"] = product_dict
+            # async_task("inventory_management_system.utils.send_email",q_options=kwargs)
+            send_email(kwargs)
         product.save()
         user_instance = CustomUser.objects.get(id=session.metadata.get('user_id'))
         PaymentLog.objects.create(amount=total_amount,customer_stripe_id=session.customer,
@@ -174,9 +177,8 @@ def create_subscription(request):
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)
         user = CustomUser.objects.get(id=data['user_id'],account=admin_user.account)
-        response,user,coupon_id = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
-        user.subscription_id=response.id
-        user.coupon_id = coupon_id
+        response,subscription_instance = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
+        user.subscription=subscription_instance
         user.save()
         return Response(response_template(STATUS_SUCCESS,message="User subscription is created successfully",
                                           response=response),status=status.HTTP_201_CREATED)
