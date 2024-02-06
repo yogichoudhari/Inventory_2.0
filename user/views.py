@@ -4,13 +4,13 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework import status
 from django.contrib.auth.models import User
-from .models import User as CustomUser,Account
+from .models import User as CustomUser,Account, Role
 from django.contrib import auth
 from .serializers import (CustomUserSerializer,
                           LoginSerializer, 
                           UpdateCustomUserSerializer,
                           AdminUserSerializer,
-                          PermissionSerializer)
+                          PermissionSerializer,RoleSerializer)
 from django.core.cache import cache
 from inventory_management_system.utils import (get_tokens_for_user,
                                                send_otp_via_email,
@@ -112,8 +112,7 @@ def create_user(request):
             created_user_instance.save()
             
             if user_data['subscription']:
-                pdb.set_trace()
-                response,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing'],user_data['subscription']['product_name'])
+                response,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing_id'],user_data['subscription']['product_id'])
                 created_user_instance.subscription = subscription_instance  
                 created_user_instance.save()
             # Log user creation success
@@ -285,3 +284,15 @@ def users(request):
     serialize_instances = UpdateCustomUserSerializer(users,many=True)
     return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),
                     status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+def user_roles(request):
+    try:
+        roles = Role.objects.all()
+        role_serialize = RoleSerializer(roles,many=True)
+        return Response(response_template(STATUS_SUCCESS,data=role_serialize.data),
+                        status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),
+                        status=status.HTTP_400_BAD_REQUEST)

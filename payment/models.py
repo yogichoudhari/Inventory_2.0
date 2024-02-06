@@ -40,12 +40,8 @@ class Coupon(models.Model):
 
 class UserSubscriptionDetail(models.Model):
     subscription_id = models.CharField(max_length=30)
-    status_choices = [
-        ("a","active"),
-        ("e","expired")
-    ]
     coupon = models.ForeignKey(Coupon,on_delete=models.SET_NULL,null=True)
-    status = models.CharField(choices=status_choices,max_length=35)
+    status = models.CharField(max_length=35)
     end_on = models.DateField()
     billing = models.CharField(max_length=20)
     name = models.CharField(max_length=35)

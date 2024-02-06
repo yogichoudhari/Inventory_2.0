@@ -6,8 +6,11 @@ import urllib.parse
 import logging
 import pdb
 import time
-from user.models import User as CustomUser,Roll
+import stripe
+from payment.services import assign_subscription_to_user
+from user.models import User as CustomUser,Role
 from django.contrib.auth.models import User
+from payment.services import assign_subscription_to_user
 from inventory_management_system.utils import response_template,  STATUS_SUCCESS,send_email
 logger = logging.getLogger('main')
 CLIENT_ID = config('SALESFORCE_CLIENT_ID')
@@ -42,7 +45,6 @@ def get_access_token(code):
     
 def fetch_salesforce_users(admin_user):
     try:
-        pdb.set_trace()
         endpoint ="/services/data/v59.0/chatter/users/"
         url = f'{base_url}{endpoint}'
         access_token = cache.get('salesforce_access_token')
@@ -50,7 +52,7 @@ def fetch_salesforce_users(admin_user):
         response = requests.get(url,headers=headers)
         logger.info(f'response {response.json()}')
         users = response.json()['users']
-        roll = Roll.objects.get(name='Customer')
+        role = Role.objects.get(name='Customer')
         account = admin_user.account
         users_arr = []
         for user in users:
@@ -65,25 +67,32 @@ def fetch_salesforce_users(admin_user):
                 auth_obj = User.objects.create_user(username=username,email=email,first_name=first_name,last_name=last_name)
                 auth_obj.set_password('123456')
                 auth_obj.save()
-                user = CustomUser.objects.create(user=auth_obj,phone=phone,account=account,roll=roll,city=address['city'],state=address['state'],is_verified=True)
+                user = CustomUser.objects.create(user=auth_obj,phone=phone,account=account,role=role,city=address['city'],state=address['state'],is_verified=True)
+                customer_stripe_response = stripe.Customer.create(
+                    name=user.user.username,
+                    email=user.user.email
+                )
+                user.stripe_id = customer_stripe_response.id
+                user.save()
+                response,subscription_instance = assign_subscription_to_user(user,"monthly","Standard")
+                user.subscription = subscription_instance  
+                user.save()
                 user_dict.update({"username":username,'first_name':first_name,"last_name":last_name,"email":email})
                 users_arr.append(user_dict)
         if users_arr:
-            kwargs = {}
-            kwargs["subject"] = "Salesforce user synchronization in Application"
-            kwargs['email'] = admin_user.user.email
-            kwargs['context'] = {"users":users_arr,"admin":admin_user}
-            kwargs['template_name'] = "salesforce_user.html"
-            send_email(kwargs)
+            subject= "Salesforce user synchronization in Application"
+            email = admin_user.user.email
+            context = {"users":users_arr,"admin":admin_user}
+            template_name = "salesforce_user.html"
+            send_email(context,email,template_name,subject)
         else:
             logger.info(f'Users are up to date updated')
     except Exception as e:
-        kwargs = {}
-        kwargs['template_name'] = "salesforce_user.html"
-        kwargs['subject'] = "Salesforce user synchronization in Application"
-        kwargs['email'] = admin_user.user.email
-        kwargs['context'] = {"error":f'{str(e)}',"admin":admin_user}
-        send_email(kwargs)
+        template_name = "salesforce_user.html"
+        subject= "Salesforce user synchronization in Application"
+        email = admin_user.user.email
+        context = {"error":f'{str(e)}',"admin":admin_user}
+        send_email(context,email,template_name,subject)
         logger.error(f'error occured while updating the user as {str(e)}')
             
                         

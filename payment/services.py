@@ -6,12 +6,10 @@ from django_q.tasks import async_task
 from datetime import datetime
 from inventory_management_system.utils import send_email
 logger = logging.getLogger("main")
-def assign_subscription_to_user(user,billing,product_name):
+def assign_subscription_to_user(user,billing_id,product_id):
     try:
-        import pdb
-        pdb.set_trace()
-        price = SubscriptionPlan.objects.filter(name=billing).first()
-        product = Subscription.objects.filter(name=product_name).first()
+        price = SubscriptionPlan.objects.filter(id=billing_id).first()
+        product = Subscription.objects.filter(id=product_id).first()
         coupon_id = Coupon.objects.filter(subscription=product).first()
         response = stripe.Subscription.create(
         customer=user.stripe_id,

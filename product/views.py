@@ -9,6 +9,7 @@ from rest_framework.permissions import IsAdminUser,IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import status
 from .models import Product
+from payment.models import Subscription,SubscriptionPlan,UserSubscriptionDetail
 from django.contrib.auth.models import User
 from user.models import User as CustomUser
 from django.contrib import auth
@@ -23,9 +24,9 @@ from inventory_management_system.utils import (response_template)
 from survey.services import create_survey_and_collector
 from django.conf import settings
 from django.forms.models import model_to_dict
-
-# for views responses
-
+from payment.services import assign_subscription_to_user
+from .services import sync_stripe_data
+from django_q.tasks import async_task
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed"  
 
@@ -147,6 +148,7 @@ def update_stock(request):
 
 @api_view(["POST"])
 def add_product(request):
+    pdb.set_trace()
     if not request.user.is_superuser and request.user.is_authenticated:
         user_instance = CustomUser.objects.get(user=request.user)
         try:
@@ -190,6 +192,7 @@ def make_purchase(request, id):
         user = CustomUser.objects.get(user=request.user)
         user_id = user.id
         account = user.account
+        async_task("product.services.sync_stripe_data",user)
         try:
             product = Product.objects.get(pk=product_id,account=account)
         except Product.DoesNotExist:

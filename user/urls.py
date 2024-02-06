@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/',views.login,),
     path("user-profile/",views.user_profile),
     path("user-list",views.users),
+    path("roles/",views.user_roles),
     path("grant-permission/", views.grant_permission_to_user),
     path("create-permission-set/", views.create_permission_set),
 ]

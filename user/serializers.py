@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User as CustomUser, Account, Roll, Permission
+from .models import User as CustomUser, Account, Role, Permission
 from django.contrib.auth.models import User
 from indian_cities.dj_city import cities
 from user.models import state_choices
@@ -44,15 +44,18 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-class RollSerializer(serializers.Serializer):
-    name = serializers.CharField()
+class RoleSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='pk')
+    class Meta:
+        model = Role
+        fields = ["id","name"]
 
 class CustomUserSerializer(serializers.ModelSerializer):
-    roll = RollSerializer()
+    role = serializers.IntegerField()
     user = UserSerializer()
     class Meta:
         model = CustomUser
-        fields = ["user", "phone", "roll", "state", 
+        fields = ["user", "phone", "role", "state", 
                   "city", "account","is_verified"]
 
     def validate(self,data):
@@ -68,19 +71,21 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self,validated_data):
+        import pdb
+        pdb.set_trace()
         user_data = validated_data.pop("user")
-        roll_name = validated_data.pop("roll")
+        role_id = validated_data.pop("role")
         account_instance = self.context.get("account")
         try:
-            roll_obj = Roll.objects.get(name=roll_name.get('name').capitalize())
+            role_obj = Role.objects.get(id=role_id)
         except Exception as e:
-            raise serializers.ValidationError("incorrect roll")
+            raise serializers.ValidationError("incorrect role id provided")
         user_serialize = UserSerializer(data=user_data,context={"is_admin":False})
         if user_serialize.is_valid():
             user_instance = user_serialize.save()
         custom_user , created = CustomUser.objects.get_or_create(user=user_instance,
                                                                 account=account_instance,
-                                                                 roll=roll_obj,
+                                                                 role=role_obj,
                                                                 **validated_data)
         return custom_user
 
@@ -170,10 +175,10 @@ class AdminUserSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop('user')
         account_data = validated_data.pop('account')
         user_serialize = UserSerializer(data=user_data,context={'is_admin':True})
-        roll_obj = Roll.objects.get(name="Admin")
+        role_obj = Role.objects.get(name="Admin")
         if user_serialize.is_valid():
             user_instance = user_serialize.save()
-        admin_user , created = CustomUser.objects.get_or_create(user=user_instance,roll=roll_obj,**validated_data)
+        admin_user , created = CustomUser.objects.get_or_create(user=user_instance,role=role_obj,**validated_data)
         account_serialize = AccountSerializer(data=account_data,context={'user_obj':admin_user})
         if account_serialize.is_valid():
             account_instance = account_serialize.save()
@@ -195,3 +200,11 @@ class LoginSerializer(serializers.Serializer):
         if not user.check_password(password):
             raise serializers.ValidationError("incorrect password entered")
         return attrs
+    
+    
+
+# class RoleTableSerializer(serializers.ModelSerializer):
+#     id = serializers.ReadOnlyField(source='pk')
+#     class Meta:
+#         model = Role
+#         fields = ["id","name"]

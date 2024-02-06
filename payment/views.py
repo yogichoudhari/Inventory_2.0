@@ -7,7 +7,7 @@ from rest_framework import status
 from product.models import Product
 from .models import PaymentLog, Subscription, SubscriptionPlan, Coupon
 from user.models import User as CustomUser
-from .serializers import (PaymentLogSerializer)
+from .serializers import (PaymentLogSerializer, SubscriptionSerializer, SubscriptionPlanSerializer)
 from django.forms.models import model_to_dict
 import stripe
 from inventory_management_system.utils import (send_email,response_template, STATUS_FAILED, 
@@ -177,7 +177,7 @@ def create_subscription(request):
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)
         user = CustomUser.objects.get(id=data['user_id'],account=admin_user.account)
-        response,subscription_instance = services.assign_subscription_to_user(user,data['billing'],data['product_name'])
+        response,subscription_instance = services.assign_subscription_to_user(user,data['billing_id'],data['product_id'])
         user.subscription=subscription_instance
         user.save()
         return Response(response_template(STATUS_SUCCESS,message="User subscription is created successfully",
@@ -219,3 +219,18 @@ def modify_subscription(request):
 def cancel_subscription(request):
     pass
 
+@api_view(['GET'])
+def plans(request):
+    user = CustomUser.objects.get(user=request.user)
+    account = user.account
+    subscriptions = Subscription.objects.filter(account=account)
+    subscriptions_plan = SubscriptionPlan.objects.filter(product__in=subscriptions)
+    
+    # subscription_data = []
+    # for subscription in subscriptions:
+    #     subscription_plans = SubscriptionPlan.objects.filter(product=subscription)
+    #     subscription_dict = model_to_dict(subscription)
+    #     subscription_plan_dict = model_to_dict(subscription_plans)
+    subscription_serializer = SubscriptionPlanSerializer(subscriptions_plan,many=True)
+    return Response(response_template(STATUS_SUCCESS,data=subscription_serializer.data),
+                    status=status.HTTP_200_OK)

@@ -46,12 +46,12 @@ state_choices = (("Andhra Pradesh","Andhra Pradesh"),
 
 
 
-class Roll(models.Model):
-    roll_choices = (
+class Role(models.Model):
+    role_choices = (
         ('Admin',"Admin"),
         ("Customer","Customer")
     )
-    name = models.CharField(choices=roll_choices, max_length=50)
+    name = models.CharField(choices=role_choices, max_length=50)
 
     def __str__(self):
         return self.name
@@ -77,10 +77,10 @@ class Permission(models.Model):
         
 class User(models.Model):
     user = models.OneToOneField(BuiltInUser, on_delete=models.CASCADE, related_name="extra_user_fields")
-    roll = models.ForeignKey(Roll,on_delete=models.CASCADE)
+    role = models.ForeignKey(Role,on_delete=models.CASCADE)
     phone = models.CharField(validators=[phone_validator],max_length=10,null=False)
-    city = models.CharField(choices=cities,max_length=50)
-    state = models.CharField(choices=state_choices, max_length=35)
+    city = models.CharField(choices=cities,max_length=50,null=True)
+    state = models.CharField(choices=state_choices, max_length=35,null=True)
     account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)
     permissions = models.ManyToManyField(Permission,related_name="permission",blank=True)
     subscription = models.ForeignKey("payment.UserSubscriptionDetail",on_delete=models.SET_NULL,null=True)
