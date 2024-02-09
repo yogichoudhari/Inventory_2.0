@@ -84,9 +84,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'inventory',
-        'USER':'admin',
-        'PASSWORD':"123456",
-        'HOST':'localhost',
+        'USER':'inventory_admin',
+        'PASSWORD':"Physically11",
+        'HOST':'database.cfkkm6cqab9u.ap-southeast-2.rds.amazonaws.com',
         'PORT':'5432'
     }
 }

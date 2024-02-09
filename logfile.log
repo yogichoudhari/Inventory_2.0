@@ -5941,3 +5941,8 @@ TypeError: Field 'id' expected a number but got <django.contrib.auth.models.Anon
 2024-02-07 02:44:08,619 - 116-- link=https://dashboard.stripe.com/test/logs/req_uS6YJFfx1XblKe message='Dashboard link for request'
 2024-02-07 02:44:08,635 - 119-- User is created successfully: DemoUser05
 2024-02-07 03:01:21,721 - 241-- Unauthorized: /api/products/
+2024-02-09 19:28:18,700 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 19:28:29,378 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 19:28:41,054 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 19:28:43,560 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 19:28:58,197 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
