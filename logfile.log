@@ -5997,3 +5997,24 @@ TypeError: send_email() missing 3 required positional arguments: 'to_email', 'te
 2024-02-09 22:06:19,634 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/utils.py changed, reloading.
 2024-02-09 22:06:23,933 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/utils.py changed, reloading.
 2024-02-09 22:06:46,757 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/utils.py changed, reloading.
+2024-02-09 22:59:03,260 - 123-- message='Request to Stripe api' method=post path=https://api.stripe.com/v1/customers
+2024-02-09 22:59:03,260 - 116-- api_version=2023-10-16 message='Post details' post_data=name=AdminUser01&email=yogesh.choudhari%40webkorps.com
+2024-02-09 22:59:03,263 - 1052-- Starting new HTTPS connection (1): api.stripe.com:443
+2024-02-09 22:59:03,854 - 546-- https://api.stripe.com:443 "POST /v1/customers HTTP/1.1" 200 650
+2024-02-09 22:59:03,855 - 123-- message='Stripe API response' path=https://api.stripe.com/v1/customers response_code=200
+2024-02-09 22:59:03,855 - 116-- body='{\n  "id": "cus_PX1w8jGo5tzcDD",\n  "object": "customer",\n  "address": null,\n  "balance": 0,\n  "created": 1707499743,\n  "currency": null,\n  "default_source": null,\n  "delinquent": false,\n  "description": null,\n  "discount": null,\n  "email": "yogesh.choudhari@webkorps.com",\n  "invoice_prefix": "D258A8E8",\n  "invoice_settings": {\n    "custom_fields": null,\n    "default_payment_method": null,\n    "footer": null,\n    "rendering_options": null\n  },\n  "livemode": false,\n  "metadata": {},\n  "name": "AdminUser01",\n  "next_invoice_sequence": 1,\n  "phone": null,\n  "preferred_locales": [],\n  "shipping": null,\n  "tax_exempt": "none",\n  "test_clock": null\n}' message='API response body'
+2024-02-09 22:59:03,856 - 116-- link=https://dashboard.stripe.com/test/logs/req_FuN6a8KhbIG5Xq message='Dashboard link for request'
+2024-02-09 22:59:43,944 - 158-- Cache keys ['148417', 'otp_6', 'access_token']
+2024-02-09 22:59:45,750 - 161-- Cache keys ['148417', 'otp_6', 'access_token']
+2024-02-09 23:05:02,962 - 241-- Unauthorized: /api/products/1
+2024-02-09 23:05:23,069 - 241-- Forbidden: /api/users/login/
+2024-02-09 23:07:35,822 - 158-- Cache keys ['321101', 'access_token', 'otp_7', '275365', '148417']
+2024-02-09 23:07:37,194 - 161-- Cache keys ['321101', 'access_token', 'otp_7', '275365', '148417']
+2024-02-09 23:31:35,145 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/user/views.py changed, reloading.
+2024-02-09 23:47:43,378 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:47:45,572 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:47:48,834 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:48:09,611 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:48:11,783 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:48:18,151 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 23:48:28,575 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
