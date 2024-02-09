@@ -26,13 +26,12 @@ def otp_temp_storage(otp,user):
 def send_otp_via_email(user):
     otp = generate_otp()
     otp_temp_storage(otp,user)
-    kwargs = {}
-    kwargs["subject"] = "Account Verification"
-    kwargs["to_email"] = user.user.email
-    kwargs['context'] = {'otp':otp,"username":user.user.username,
+    subject= "Account Verification"
+    to_email = user.user.email
+    context = {'otp':otp,"username":user.user.username,
                "account":user.account.name}
-    kwargs["template_name"] = "email_otp_template.html"
-    send_email(kwargs)
+    template_name = "email_otp_template.html"
+    send_email(context=context, to_email=to_email,template_name=template_name,subject=subject)
 
 
 def get_tokens_for_user(user):
