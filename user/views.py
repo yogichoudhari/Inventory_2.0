@@ -117,7 +117,7 @@ def create_user(request):
             created_user_instance.stripe_id = customer_stripe_response.id
             created_user_instance.save()
             
-            if user_data['subscription']:
+            if 'subscription' in user_data:
                 response,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing_id'],user_data['subscription']['product_id'])
                 created_user_instance.subscription = subscription_instance  
                 created_user_instance.save()
