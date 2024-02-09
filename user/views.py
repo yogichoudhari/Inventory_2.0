@@ -72,8 +72,11 @@ def create_user(request):
     try:
         if request.method == "POST":
             user_data = request.data
+            logger.info(f"User data {user_data}")
             user_instance = request.user.extra_user_fields
+            logger.info(f"User instance {user_instance}")
             account_instance = Account.objects.get(admin=user_instance)
+            logger.info(f"User data {account_instance}")
             
             # Wrap the code in a try-except block for handling serializer errors
             try:
