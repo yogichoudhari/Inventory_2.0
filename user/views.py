@@ -42,27 +42,30 @@ def register_admin(request):
     '''This view function is being used by the admin user to 
     
     register the new user
-    '''
-    if request.method=="POST":
-        user_data = request.data
-        serialized = AdminUserSerializer(data=user_data)
-        if serialized.is_valid():
-            created_user_instance = serialized.save()
-            customer_stripe_response = stripe.Customer.create(
-                name = created_user_instance.user.username,
-                email = created_user_instance.user.email
-            )
-            created_user_instance.stripe_id = customer_stripe_response.id
-            created_user_instance.save()
-            # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
-            send_otp_via_email(created_user_instance)
-            return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),
-                            status=status.HTTP_201_CREATED)
-        else:
-            return Response(response_template(STATUS_FAILED,
-                             error=f"{serialized.errors}"),
-                            status=status.HTTP_400_BAD_REQUEST)
-
+        '''
+    try:
+        if request.method=="POST":
+            user_data = request.data
+            serialized = AdminUserSerializer(data=user_data)
+            if serialized.is_valid():
+                created_user_instance = serialized.save()
+                customer_stripe_response = stripe.Customer.create(
+                    name = created_user_instance.user.username,
+                    email = created_user_instance.user.email
+                )
+                created_user_instance.stripe_id = customer_stripe_response.id
+                created_user_instance.save()
+                # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
+                send_otp_via_email(created_user_instance)
+                return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),
+                                status=status.HTTP_201_CREATED)
+            else:
+                return Response(response_template(STATUS_FAILED,
+                                 error=f"{serialized.errors}"),
+                                status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response(response_template(STATUS_FAILED,error=f"{str(e)}"),
+                        status=status.HTTP_400_BAD_REQUEST)
 @api_view(["POST"])
 @permission_classes([IsAuthenticated,IsAdminUser])
 def create_user(request):
