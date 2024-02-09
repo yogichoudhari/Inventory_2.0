@@ -21,7 +21,7 @@ DEBUG = config("DEBUG")
 # ALLOWED_HOSTS = ['*']
 
 # settings.py
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.ngrok-free.app']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 

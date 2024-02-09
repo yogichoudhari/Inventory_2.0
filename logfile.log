@@ -5946,3 +5946,11 @@ TypeError: Field 'id' expected a number but got <django.contrib.auth.models.Anon
 2024-02-09 19:28:41,054 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
 2024-02-09 19:28:43,560 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
 2024-02-09 19:28:58,197 - 266-- /home/dell/Desktop/python training/Django Rest Framework/project05/inventory_management_system/inventory_management_system/settings.py changed, reloading.
+2024-02-09 20:29:51,581 - 241-- Not Found: /
+2024-02-09 20:29:51,736 - 241-- Not Found: /favicon.ico
+2024-02-09 20:30:47,024 - 241-- Forbidden (CSRF token from POST incorrect.): /admin/login/
+2024-02-09 20:31:58,125 - 128-- Unexpected error during user creation: User has no extra_user_fields.
+2024-02-09 20:31:58,126 - 241-- Internal Server Error: /api/users/create-user/
+2024-02-09 20:33:47,839 - 241-- Not Found: /
+2024-02-09 20:37:16,905 - 241-- Bad Request: /api/users/register/
+2024-02-09 20:38:00,924 - 241-- Not Found: /
