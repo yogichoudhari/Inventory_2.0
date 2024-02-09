@@ -26,7 +26,6 @@ def get_auth_dialog_url():
 from http.cookies import SimpleCookie
 
 def get_access_token(code):
-    pdb.set_trace()
     headers = {
                "content-type": "application/json"
                }

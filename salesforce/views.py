@@ -21,7 +21,6 @@ def auth_dialog(request):
 
 @api_view(["POST","GET"])
 def get_auth_token(request):
-    pdb.set_trace()
     code = request.GET.get('code')
     token = services.get_access_token(code)
     access_token = token.get('access_token')

@@ -171,8 +171,6 @@ def create_subscription_product(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def create_subscription(request):
-    import pdb
-    pdb.set_trace()
     try:
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)

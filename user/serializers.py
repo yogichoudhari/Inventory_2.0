@@ -71,8 +71,6 @@ class CustomUserSerializer(serializers.ModelSerializer):
         return data
 
     def create(self,validated_data):
-        import pdb
-        pdb.set_trace()
         user_data = validated_data.pop("user")
         role_id = validated_data.pop("role")
         account_instance = self.context.get("account")

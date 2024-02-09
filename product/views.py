@@ -77,7 +77,6 @@ def product(request,id=None):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def check_product(request):
-    # pdb.set_trace()
     try:
         user = CustomUser.objects.get(user=request.user)
         account = user.account
@@ -148,7 +147,6 @@ def update_stock(request):
 
 @api_view(["POST"])
 def add_product(request):
-    pdb.set_trace()
     if not request.user.is_superuser and request.user.is_authenticated:
         user_instance = CustomUser.objects.get(user=request.user)
         try:

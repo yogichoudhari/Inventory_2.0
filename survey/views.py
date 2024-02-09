@@ -37,7 +37,6 @@ logger = logging.getLogger(__name__)
 
 @api_view(["GET"])
 def oauth_dialog(request):
-    # pdb.set_trace()
     auth_dialog_uri = get_auth_dialog()
     return redirect(auth_dialog_uri)
 
