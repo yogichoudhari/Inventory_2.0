@@ -33,7 +33,7 @@ import logging
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed" 
 #log configuration 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("main")
 
 #stripe configuration 
 stripe.api_key = config("STRIPE_SECRET_KEY")
@@ -130,7 +130,7 @@ def create_user(request):
         print(logger)
         logger.error(f"Unexpected error during user creation: {e}")
         return Response(response_template(STATUS_FAILED,
-                         error=f'Unexpected error: {e}'),
+                         error=f'Unexpected error: {str(e)}'),
                         status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["POST"])
