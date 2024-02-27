@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from product.models import Product
-from .models import PaymentLog, Subscription, SubscriptionPlan, Coupon
+from .models import PaymentLog, Subscription, SubscriptionPlan, Coupon,UserSubscriptionDetail
 from user.models import User as CustomUser
 from .serializers import (PaymentLogSerializer, SubscriptionSerializer, SubscriptionPlanSerializer)
 from django.forms.models import model_to_dict
@@ -172,10 +172,12 @@ def create_subscription_product(request):
 @permission_classes([IsAdminUser,IsAuthenticated])
 def create_subscription(request):
     try:
-        data = request.data
+        billing_id = request.data.get('billing_id')
+        product_id = request.data.get('product_id')
+        user_id = request.data.get('user_id')
         admin_user = CustomUser.objects.get(user=request.user)
-        user = CustomUser.objects.get(id=data['user_id'],account=admin_user.account)
-        response,subscription_instance = services.assign_subscription_to_user(user,data['billing_id'],data['product_id'])
+        user = CustomUser.objects.get(id=user_id,account=admin_user.account)
+        response,subscription_instance = services.assign_subscription_to_user(user,billing_id,product_id)
         user.subscription=subscription_instance
         user.save()
         return Response(response_template(STATUS_SUCCESS,message="User subscription is created successfully",
@@ -189,19 +191,20 @@ def create_subscription(request):
 @api_view(["POST"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def modify_subscription(request):
-    try:
+    try: 
         data = request.data
         admin_user = CustomUser.objects.get(user=request.user)
         user = CustomUser.objects.get(id=data.get('user_id'),account=admin_user.account)
         subscription = stripe.Subscription.retrieve(user.subscription_id)
+        product_id = subscription['items']['data'][0]['price']['product']
         if data.get("product_name"):
             product = Subscription.objects.get(name=data.get("product_name"),account=admin_user.account)
             plan = SubscriptionPlan.objects.get(name=data.get("billing"),product=product)
         else:
-            product = Subscription.objects.get(product_id=subscription['items']['data'][0]['price']['product'])
+            product = Subscription.objects.get(product_id=product_id)
             plan = SubscriptionPlan.objects.get(name=data.get("billing"),product=product)
         stripe.Subscription.modify(
-            user.subscription_id,
+            user.subscription.subscription_id,
             items=[{"id":subscription['items']['data'][0]['id'],"price":plan.price_id}]
         )
         return Response(response_template(STATUS_SUCCESS,message="subscription is successfully modified"),
@@ -212,10 +215,25 @@ def modify_subscription(request):
         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),
                         status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(["POST"])
+@api_view(["DELETE"])
 @permission_classes([IsAdminUser,IsAuthenticated])
-def cancel_subscription(request):
-    pass
+def cancel_subscription(request,user_id):
+    try:
+        user = CustomUser.objects.filter(id=user_id).first()
+        if user:
+            user_subscription_id = user.subscription.subscription_id
+            response = stripe.Subscription.cancel(user_subscription_id)
+            if response.status=='canceled':
+                user.subscription.delete()
+                return Response(response_template(STATUS_SUCCESS,message='User subscription is successfully canceled and you can'),
+                                status=status.HTTP_200_OK)
+            else:
+                raise Exception("error occured during subscription cancellation")
+        else:
+            raise Exception("User Does not exit")
+    except Exception as e:
+        return Response(response_template(STATUS_FAILED,error=f'An error occured: {str(e)}'),
+                        status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def plans(request):

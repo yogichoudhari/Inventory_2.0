@@ -74,9 +74,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop("user")
         role_id = validated_data.pop("role")
         account_instance = self.context.get("account")
-        try:
-            role_obj = Role.objects.get(id=role_id)
-        except Exception as e:
+        role_obj = Role.objects.get(id=role_id)
+        if not role_obj:
             raise serializers.ValidationError("incorrect role id provided")
         user_serialize = UserSerializer(data=user_data,context={"is_admin":False})
         if user_serialize.is_valid():
@@ -191,13 +190,13 @@ class LoginSerializer(serializers.Serializer):
     def validate(self, attrs):
         username = attrs.get('username')
         password = attrs.get('password')
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            raise serializers.ValidationError("incorrect username")
-        if not user.check_password(password):
-            raise serializers.ValidationError("incorrect password entered")
-        return attrs
+        # try:
+        #     user = User.objects.get(username=username)
+        # except User.DoesNotExist:
+        #     raise serializers.ValidationError("incorrect username")
+        # if not user.check_password(password):
+        #     raise serializers.ValidationError("incorrect password entered")
+        # return attrs
     
     
 

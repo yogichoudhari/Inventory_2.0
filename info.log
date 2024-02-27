@@ -80,3 +80,7 @@ DETAIL:  Failing row contains (18, , null, null, null, t, 1, 2, 24, null).
 2024-02-10 03:14:27,406 - INFO - views - User data {'user': {'username': 'DemoUser11', 'email': 'gire5@evo.com', 'password': '123456', 'password2': '123456'}, 'phone': '6548548587', 'city': 'Indore', 'role': 2, 'state': 'Madhya Pradesh', 'is_verified': True}
 2024-02-10 03:14:27,612 - INFO - views - User instance AdminUser02
 2024-02-10 03:14:27,815 - INFO - views - User data Demo02
+2024-02-22 20:19:49,549 - ERROR - views - error occured {'non_field_errors': [ErrorDetail(string='incorrect username', code='invalid')]}
+2024-02-26 22:05:21,734 - ERROR - views - Unexpected error during user creation: JSON parse error - Expecting value: line 8 column 12 (char 177)
+2024-02-26 22:05:31,314 - ERROR - views - Unexpected error during user creation: Role matching query does not exist.
+2024-02-26 22:58:00,862 - ERROR - views - error occured {'non_field_errors': [ErrorDetail(string='incorrect password entered', code='invalid')]}

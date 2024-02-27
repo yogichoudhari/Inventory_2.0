@@ -11,12 +11,13 @@ from .serializers import (CustomUserSerializer,
                           UpdateCustomUserSerializer,
                           AdminUserSerializer,
                           PermissionSerializer,RoleSerializer)
+from django.db import transaction
 from django.core.cache import cache
 from inventory_management_system.utils import (get_tokens_for_user,
                                                send_otp_via_email,
                                                response_template, send_email)
 from django_q.tasks import async_task
-from .services import grant_permission
+from .services import grant_permission, create_stripe_customer
 from payment.services import assign_subscription_to_user
 from datetime import datetime
 from decouple import config
@@ -24,6 +25,8 @@ import stripe
 import json
 import pdb
 import logging
+from .signals import user_logged_in
+
 
 # Create your views here.
 
@@ -33,37 +36,32 @@ import logging
 STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed" 
 #log configuration 
-logger = logging.getLogger("main")
-
+# logger = logging.getLogger("main")
+logger = logging.getLogger("watchtower")
 #stripe configuration 
 stripe.api_key = config("STRIPE_SECRET_KEY")
 @api_view(['POST'])
 def register_admin(request):
     '''This view function is being used by the admin user to 
-    
     register the new user
         '''
     try:
         if request.method=="POST":
             user_data = request.data
             serialized = AdminUserSerializer(data=user_data)
-            if serialized.is_valid():
-                created_user_instance = serialized.save()
-                customer_stripe_response = stripe.Customer.create(
-                    name = created_user_instance.user.username,
-                    email = created_user_instance.user.email
-                )
-                created_user_instance.stripe_id = customer_stripe_response.id
-                created_user_instance.save()
-                # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
-                send_otp_via_email(created_user_instance)
+            if serialized.is_valid(raise_exception=True):
+                with transaction.atomic():
+                    created_user_instance = serialized.save()
+                    stripe_id = create_stripe_customer(created_user_instance)
+                    created_user_instance.stripe_id = stripe_id
+                    created_user_instance.save()
+                    # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
+                    send_otp_via_email(created_user_instance)
                 return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),
                                 status=status.HTTP_201_CREATED)
-            else:
-                return Response(response_template(STATUS_FAILED,
-                                 error=f"{serialized.errors}"),
-                                status=status.HTTP_400_BAD_REQUEST)
+            
     except Exception as e:
+        logger.exception(f"error occured during user creation: {str(e)}")
         return Response(response_template(STATUS_FAILED,error=f"{str(e)}"),
                         status=status.HTTP_400_BAD_REQUEST)
 @api_view(["POST"])
@@ -72,65 +70,30 @@ def create_user(request):
     try:
         if request.method == "POST":
             user_data = request.data
-            logger.info(f"User data {user_data}")
             user_instance = request.user.extra_user_fields
-            logger.info(f"User instance {user_instance}")
             account_instance = Account.objects.get(admin=user_instance)
-            logger.info(f"User data {account_instance}")
             
             # Wrap the code in a try-except block for handling serializer errors
-            try:
-                serialized = CustomUserSerializer(data=user_data,
-                    context={"user": user_instance, "account": account_instance})
-                serialized.is_valid(raise_exception=True)
-            except Exception as e:
-                # Log the validation error and return a response
-                logger.error(f"User creation failed due to error: {e}")
-                return Response(response_template(STATUS_FAILED,
-                                 error=f'{e.detail}'),
-                                status=status.HTTP_400_BAD_REQUEST)
-            # Save the user instance
-            created_user_instance = serialized.save()
-            # Create a Stripe customer
-            try:
-                customer_stripe_response = stripe.Customer.create(
-                    name=created_user_instance.user.username,
-                    email=created_user_instance.user.email
-                )
-                pm = stripe.PaymentMethod.create(
-                  type="card",
-                  card={
-                    "token":"tok_visa"},
-                )   
-                stripe.PaymentMethod.attach(
-                    pm.id,
-                    customer=customer_stripe_response.id,
-                )
-            except stripe.error.StripeError as stripe_error:
-                # Log the Stripe error and return a response
-                logger.error(f"Stripe customer creation failed: {stripe_error}")
-                return Response(response_template(STATUS_FAILED,
-                                 error=f'Stripe customer creation failed: {stripe_error}'),
-                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            serialized = CustomUserSerializer(data=user_data,
+                context={"user": user_instance, "account": account_instance})
+            serialized.is_valid(raise_exception=True)
+            with transaction.atomic():
+                created_user_instance = serialized.save()
+                # Create a Stripe customer
 
-            # Update the user instance with the Stripe ID
-            created_user_instance.stripe_id = customer_stripe_response.id
-            created_user_instance.save()
-            
-            if 'subscription' in user_data:
-                response,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing_id'],user_data['subscription']['product_id'])
-                created_user_instance.subscription = subscription_instance  
+                stripe_id = create_stripe_customer(created_user_instance)
+                created_user_instance.stripe_id = stripe_id
+                if 'subscription' in user_data:
+                    _,subscription_instance = assign_subscription_to_user(created_user_instance,user_data['subscription']['billing_id'],user_data['subscription']['product_id'])
+                    created_user_instance.subscription = subscription_instance  
+                # lastly save the user 
                 created_user_instance.save()
-            # Log user creation success
-            logger.info(f"User is created successfully: {created_user_instance}")
-
             # Return a success response
             return Response({"status": STATUS_SUCCESS, "message": "User is created successfully"},
                             status=status.HTTP_201_CREATED)
     
     except Exception as e:
         # Log any unexpected exceptions
-        print(logger)
         logger.error(f"Unexpected error during user creation: {e}")
         return Response(response_template(STATUS_FAILED,
                          error=f'Unexpected error: {str(e)}'),
@@ -138,49 +101,47 @@ def create_user(request):
 
 @api_view(["POST"])
 def resend_otp(request):
-    email = request.data.get('email')
     try:
+        email = request.data.get('email')
         auth_user = User.objects.get(email=email)
         user = CustomUser.objects.get(user=auth_user)
         # async_task("inventory_management_system.utils.send_otp_via_email",user)
         send_otp_via_email(user)
-        send_otp_via_email(user)
+        return Response(response_template(STATUS_SUCCESS,message="otp is successfully sent"),
+                status=status.HTTP_200_OK)
     except Exception as e:
-        logger.exception(f"an error occured : that email is incorrect")
+        logger.error(f"an error occured : {str(e)}")
         return Response(response_template(STATUS_FAILED,error="user does not exist"),
                         status=status.HTTP_400_BAD_REQUEST)
-    return Response(response_template(STATUS_SUCCESS,message="otp is successfully sent"),
-                    status=status.HTTP_200_OK)
 
 
 
 @api_view(['POST'])
-def verify(request):
-    otp = request.data.get('otp')
-    user_id = cache.get(otp)
-    logger.debug(f'Cache keys {cache.keys("*")}')
+def verify_user_otp(request):
     try:
-        user_instance = CustomUser.objects.get(id=user_id)
-        logger.debug(f'Cache keys {cache.keys("*")}')
-    except Exception as e:
-        logger.debug(f'Cache keys {cache.keys("*")}')
-        logger.exception(f'incorret key')
-        return Response(response_template(STATUS_FAILED,error="incorrect otp entered"),
-                         status=status.HTTP_400_BAD_REQUEST)
-    otp_key = "otp_"+str(user_instance.id)
-    if otp_key in cache:
-        stored_otp = cache.get(otp_key)
-        if otp==stored_otp:
-            user_instance.is_verified=True
-            user_instance.save()
-            cache.delete(otp_key)
-            return Response(response_template(STATUS_SUCCESS,message="user is verified"),
-                            status=status.HTTP_200_OK)
+        otp = request.data.get('otp')
+        user_id = cache.get(otp)
+        user_instance = CustomUser.objects.filter(id=user_id).first()
+        if not user_instance:
+            raise Exception("Incorrect otp")
+        otp_key = "otp_"+str(user_instance.id)
+        if otp_key in cache:
+            stored_otp = cache.get(otp_key)
+            if otp==stored_otp:
+                user_instance.is_verified=True
+                user_instance.save()
+                cache.delete(otp_key)
+                return Response(response_template(STATUS_SUCCESS,message="user is verified"),
+                                status=status.HTTP_200_OK)
+            else:
+                return Response(response_template(STATUS_FAILED,error="incorrect otp"),
+                               status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(response_template(STATUS_FAILED,error="incorrect otp"),
-                           status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response(response_template(STATUS_FAILED,error="otp is expired"),
+            return Response(response_template(STATUS_FAILED,error="otp is expired"),
+                            status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f"An Error Occurred :{str(e)}")
+        return Response(response_template(STATUS_FAILED),error=f"Something went wrong! {str(e)}.",
                         status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(["POST"])
@@ -188,35 +149,28 @@ def login(request):
     '''This view function is used for login and when user
     user logins he will be provided with the Authentication Token
     '''
-    user_data = request.data
-    serialized= LoginSerializer(data=user_data)
-    if serialized.is_valid():
-        username = serialized.data.get('username')
-        password = serialized.data.get('password')
-        user = auth.authenticate(username=username,
-                                 password=password)
-        if username!='admin':
-            extra_user_fields = CustomUser.objects.get(user=user)
-            if user is not None and extra_user_fields.is_verified:
-                auth.login(request,user)
-                token = get_tokens_for_user(user)
-                return Response(response_template(STATUS_SUCCESS,
-                                 message='user logged in successfully',
-                                 token=token),
-                                status=status.HTTP_200_OK)
-            else:
-                return Response(response_template(STATUS_FAILED,error="user not varified"),
-                                status=status.HTTP_403_FORBIDDEN)
-        elif username=='admin':
-                auth.login(request,user)
-                token = get_tokens_for_user(user)
-                return Response(response_template(STATUS_SUCCESS,
-                                 message='user logged in successfully',
-                                 token=token),
-                                status=status.HTTP_200_OK)
-    logger.error(f'error occured {serialized.errors}')             
+
+    username = request.data.get('username')
+    password = request.data.get('password')
+    user = auth.authenticate(username=username,
+                             password=password)
+    extra_user_fields = CustomUser.objects.filter(user=user).first()
+    if user and extra_user_fields.is_verified:
+        auth.login(request,user)
+        token = get_tokens_for_user(user)
+        user = CustomUser.objects.get(user=user)
+        user_logged_in.send(sender=login,request=request,user=user,login='success')
+        return Response(response_template(STATUS_SUCCESS,
+                 message='user logged in successfully',
+                 token=token),
+                status=status.HTTP_200_OK)
+    else:
+        user = User.objects.filter(username=username).first()
+        if user:
+            user_obj = CustomUser.objects.filter(user=user).first()
+            user_logged_in.send(sender=login,request=request,user=user_obj,login='failed')     
     return Response(response_template(STATUS_FAILED,
-                     error=f'{serialized.errors}'),status=status.HTTP_400_BAD_REQUEST)
+                     error=f'Incorrect password or username'),status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 @permission_classes([IsAdminUser,IsAuthenticated])
@@ -284,13 +238,16 @@ def user_profile(request):
 @api_view(["GET"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def users(request):
-    user = CustomUser.objects.get(user=request.user)
-    account = user.related_account
-    users = CustomUser.objects.filter(account=account)
-    serialize_instances = UpdateCustomUserSerializer(users,many=True)
-    return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),
-                    status=status.HTTP_200_OK)
-
+    try:
+        user = CustomUser.objects.get(user=request.user)
+        account = user.related_account
+        users = CustomUser.objects.filter(account=account)
+        serialize_instances = UpdateCustomUserSerializer(users,many=True)
+        return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),
+                        status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.exception(f"An Error Occured: {str(e)}")
+        return Response(response_template)
 
 @api_view(["GET"])
 def user_roles(request):

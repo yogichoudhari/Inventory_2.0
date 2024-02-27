@@ -106,3 +106,15 @@ class Account(models.Model):
         super(Account,self).save(*args,**kwargs)
     def __str__(self):
         return self.name
+
+
+class UserLoggedInActivity(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    status = (
+        ('success','success'), 
+        ('failed','failed')
+    )
+    login_status = models.CharField(choices=status,max_length=8)
+    ip_address = models.GenericIPAddressField()
+    login_datetime = models.DateTimeField(auto_now=True)
+    user_agent_info = models.CharField(max_length=255)

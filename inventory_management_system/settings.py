@@ -2,8 +2,8 @@ from decouple import config
 from pathlib import Path
 import os
 import logging
-
-
+import boto3
+from watchtower import CloudWatchLogHandler
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'inventory',
         'USER':'inventory_admin',
         'PASSWORD':"Physically11",
-        'HOST':'database.cfkkm6cqab9u.ap-southeast-2.rds.amazonaws.com',
+        'HOST':'localhost',
         'PORT':'5432'
     }
 }
@@ -125,13 +125,13 @@ USE_TZ = True
 
 # Redis Cache Configuration 
 
-REDIS_HOST = '3.106.250.190'
+REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://3.106.250.190:6379/1",
+        "LOCATION": "redis://localhost:6379/1",
     }
 }
 #  stripe payment keys
@@ -216,37 +216,70 @@ EMAIL_HOST_USER = 'yogigurjar73542@gmail.com'
 EMAIL_HOST_PASSWORD = 'yfxbfiytannmvhzf'
 
 
-
+CLOUDWATCH_AWS_ID = config('AWS_ID')
+CLOUDWATCH_AWS_KEY = config('AWS_KEY')
+AWS_DEFAULT_REGION = 'ap-southeast-2'
+logger_boto3_session = boto3.setup_default_session(
+    aws_access_key_id=CLOUDWATCH_AWS_ID,
+    aws_secret_access_key=CLOUDWATCH_AWS_KEY,
+    region_name=AWS_DEFAULT_REGION,
+)
 # Loggin Configuration '
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    'handlers':{
-        'console':{
-            'class':"logging.StreamHandler",
-            'formatter':'main_formatter'
+    "formatters": {
+        "aws": {
+            "format": "%(asctime)s [%(levelname)-8s] %(message)s [%(pathname)s:%(lineno)d]",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         },
-        "file":{
-            "class":'logging.FileHandler',
-            "filename":'info.log',
-            "formatter":"main_formatter"
-        }
     },
-    'formatters':{
-        'main_formatter':{
-        'format':'{asctime} - {levelname} - {module} - {message}',
-        'style':'{'
-        }
+    "handlers": {
+        "watchtower": {
+            "level": "INFO",
+            "class": "watchtower.CloudWatchLogHandler",
+            "log_group": "Inventory-logs",
+            # Different stream for each environment
+            "stream_name": f"logs",
+            "formatter": "aws",
+        },
+        "console": {"class": "logging.StreamHandler", "formatter": "aws",},
     },
-    "loggers":{
-        'main':{
-            "handlers":["file","console"],
-            "propagate":True,
-            'level':'INFO'
-        }
-    }
+    "loggers": {
+        # Use this logger to send data just to Cloudwatch
+        "watchtower": {"level": "INFO", "handlers": ["watchtower"], "propogate": False,}
+    },
 }
+
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     'handlers':{
+#         'console':{
+#             'class':"logging.StreamHandler",
+#             'formatter':'main_formatter'
+#         },
+#         "file":{
+#             "class":'logging.FileHandler',
+#             "filename":'info.log',
+#             "formatter":"main_formatter"
+#         }
+#     },
+#     'formatters':{
+#         'main_formatter':{
+#         'format':'{asctime} - {levelname} - {module} - {message}',
+#         'style':'{'
+#         }
+#     },
+#     "loggers":{
+#         'main':{
+#             "handlers":["file","console"],
+#             "propagate":True,
+#             'level':'INFO'
+#         }
+#     }
+# }
 
 
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")

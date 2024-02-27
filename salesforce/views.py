@@ -25,7 +25,7 @@ def get_auth_token(request):
     token = services.get_access_token(code)
     access_token = token.get('access_token')
     cache.set("salesforce_access_token",access_token,timeout=7200)
-    return Response(response_template(STATUS_SUCCESS),
+    return Response(response_template(STATUS_SUCCESS,token=access_token),
                     status=status.HTTP_200_OK)
 
     

@@ -182,10 +182,10 @@ def add_product(request):
 
 
 
-@api_view(["GET",'POST'])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def make_purchase(request, id):
-    if request.method=="GET":   
+    try:
         product_id = id
         user = CustomUser.objects.get(user=request.user)
         user_id = user.id
@@ -210,7 +210,7 @@ def make_purchase(request, id):
         discounted_price = product.discounted_price*quantity
         discount = price-discounted_price
         customer_stripe_id =user.stripe_id
-        user_instance_dict = model_to_dict(user)
+        # user_instance_dict = model_to_dict(user)
         session = stripe.checkout.Session.create(
         line_items=[
             {"price_data":{
@@ -244,3 +244,8 @@ def make_purchase(request, id):
             
         return Response(response_template(STATUS_SUCCESS,url=payment_url),
                          status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f"An Error Occured: {str(e)}")
+        return Response(response_template(STATUS_FAILED,error=str(e)),status=status.HTTP_400_BAD_REQUEST) 
+    
+        
