@@ -83,13 +83,24 @@ WSGI_APPLICATION = 'inventory_management_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'inventory',
-        'USER':'inventory_admin',
-        'PASSWORD':"Physically11",
-        'HOST':'localhost',
-        'PORT':'5432'
+        'NAME': "postgres",
+        'USER': "postgres",
+        'PASSWORD': "postgres",
+        'HOST': 'backend',
+        'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'inventory',
+#         'USER':'inventory_admin',
+#         'PASSWORD':"Physically11",
+#         'HOST':'localhost',
+#         'PORT':'5432'
+#     }
+# }
 
 
 # Password validation
@@ -125,13 +136,13 @@ USE_TZ = True
 
 # Redis Cache Configuration 
 
-REDIS_HOST = 'localhost'
+REDIS_HOST = 'redis'
 REDIS_PORT = 6379
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/1",
+        "LOCATION": "redis://redis:6379/1",
     }
 }
 #  stripe payment keys
@@ -155,12 +166,10 @@ from datetime import timedelta
 ...
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
-
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
@@ -282,10 +291,10 @@ LOGGING = {
 # }
 
 
-REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
-REDIS_PORT = os.environ.get("REDIS_PORT", 6379)
-REDIS_DB = os.environ.get("REDIS_DB", 0)
-REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD", None)
+REDIS_HOST = "redis"
+REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_PASSWORD = None
 
 Q_CLUSTER = {
     "name": "hello-django",

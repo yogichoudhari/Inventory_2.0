@@ -17,7 +17,6 @@ from . import services
 from django.conf import settings
 from django_q.tasks import async_task
 import logging
-# Create your views here.
 logger = logging.getLogger("main")
 
 @api_view(["GET"])

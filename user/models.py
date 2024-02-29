@@ -5,6 +5,7 @@ from indian_cities.dj_city import cities
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
 from django.utils import timezone
+import datetime
 # from payment.models import UserSubscriptionDetail 
 state_choices = (("Andhra Pradesh","Andhra Pradesh"),
                  ("Arunachal Pradesh ","Arunachal Pradesh "),
@@ -100,6 +101,7 @@ class Account(models.Model):
     logo = models.BinaryField(null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True,blank=True)
+    token_expires_in_seconds = models.IntegerField(default=60*3)
     def save(self,*args,**kwargs):
         if self.created_at:
             self.updated_at = timezone.now()

@@ -34,16 +34,6 @@ def send_otp_via_email(user):
     send_email(context=context, to_email=to_email,template_name=template_name,subject=subject)
 
 
-def get_tokens_for_user(user):
-
-    '''This view is used to create token for user'''
-    
-    refresh = RefreshToken.for_user(user)
-
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
 
 
 

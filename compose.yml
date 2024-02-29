@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  django:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - redis
+    networks:
+      - my_network
+    ports:
+      - 8000:8000
+    volumes:
+      - my_volume:/var/lib/postgresql/data
+    # other configurations...
+
+  backend:
+    image: postgres:latest
+    volumes:
+      - my_volume:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - my_network
+
+  redis:
+    image: redis:latest
+    networks:
+      - my_network
+    volumes:
+      - my_volume:/var/lib/postgresql/data
+    # other configurations...
+
+networks:
+  my_network:
+
+volumes:
+  my_volume:

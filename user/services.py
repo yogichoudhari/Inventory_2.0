@@ -3,11 +3,14 @@ from django.db.models import Q
 from django.conf import settings
 import logging
 import pdb
+from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 import stripe
 from decouple import config
 from django.dispatch import receiver
 from .signals import user_logged_in
 from .models import UserLoggedInActivity
+from datetime import timedelta
+
 #log configuration 
 logging.basicConfig(filename="logfile.log",style='{',level=logging.DEBUG,format="{asctime} - {lineno}-- {message}")
 logger = logging.getLogger(__name__)
@@ -30,6 +33,15 @@ def create_stripe_customer(created_user_instance):
         name = created_user_instance.user.username,
         email = created_user_instance.user.email
     )
+    pm = stripe.PaymentMethod.create(
+      type="card",
+      card={
+        "token":"tok_visa"},
+    )   
+    stripe.PaymentMethod.attach(
+        pm.id,
+        customer=customer_stripe_response.id,
+    )
     return customer_stripe_response.id
 
 @receiver(user_logged_in)
@@ -42,3 +54,15 @@ def log_user_logged_in_success(sender,request,user,**kwargs):
                                                 login_status=kwargs.get('login'))
     user_login_activity_log.save()
     
+
+def get_tokens_for_user(user,account):
+
+    '''This view is used to create token for user'''
+    access_token = AccessToken()
+    access_token.lifetime = timedelta(seconds=account.token_expires_in_minutes)
+    token = access_token.for_user(user)
+    refresh = RefreshToken.for_user(user)
+    return {
+        'refresh': str(refresh),
+        'access': str(token),
+    }

@@ -3,6 +3,7 @@ from .models import User as CustomUser, Account, Role, Permission
 from django.contrib.auth.models import User
 from indian_cities.dj_city import cities
 from user.models import state_choices
+from datetime import time
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
@@ -102,7 +103,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 class AccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
-        fields = ['name']
+        fields = ['name','token_expires_in_seconds']
 
     def create(self,validated_data):
         admin = self.context.get('user_obj')
@@ -196,12 +197,4 @@ class LoginSerializer(serializers.Serializer):
         #     raise serializers.ValidationError("incorrect username")
         # if not user.check_password(password):
         #     raise serializers.ValidationError("incorrect password entered")
-        # return attrs
-    
-    
-
-# class RoleTableSerializer(serializers.ModelSerializer):
-#     id = serializers.ReadOnlyField(source='pk')
-#     class Meta:
-#         model = Role
-#         fields = ["id","name"]
+        # return attr
