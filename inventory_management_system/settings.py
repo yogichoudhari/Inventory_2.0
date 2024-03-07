@@ -16,11 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG")
+DEBUG = False
 
-# ALLOWED_HOSTS = ['*']
 
-# settings.py
 ALLOWED_HOSTS = ['*']
 
 # Application definition
@@ -91,16 +89,6 @@ DATABASES = {
     }
 }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'inventory',
-#         'USER':'inventory_admin',
-#         'PASSWORD':"Physically11",
-#         'HOST':'localhost',
-#         'PORT':'5432'
-#     }
-# }
 
 
 # Password validation
@@ -177,7 +165,7 @@ SIMPLE_JWT = {
     "ISSUER": None,
     "JSON_ENCODER": None,
     "JWK_URL": None,
-    "LEEWAY": 0,
+    "LEEWAY": 0,    
 
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
@@ -222,7 +210,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'yogigurjar73542@gmail.com'
-EMAIL_HOST_PASSWORD = 'yfxbfiytannmvhzf'
+EMAIL_HOST_PASSWORD = 'rpvzudgsagchbdfv'
 
 
 CLOUDWATCH_AWS_ID = config('AWS_ID')
@@ -261,38 +249,10 @@ LOGGING = {
     },
 }
 
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     'handlers':{
-#         'console':{
-#             'class':"logging.StreamHandler",
-#             'formatter':'main_formatter'
-#         },
-#         "file":{
-#             "class":'logging.FileHandler',
-#             "filename":'info.log',
-#             "formatter":"main_formatter"
-#         }
-#     },
-#     'formatters':{
-#         'main_formatter':{
-#         'format':'{asctime} - {levelname} - {module} - {message}',
-#         'style':'{'
-#         }
-#     },
-#     "loggers":{
-#         'main':{
-#             "handlers":["file","console"],
-#             "propagate":True,
-#             'level':'INFO'
-#         }
-#     }
-# }
 
 
-REDIS_HOST = "redis"
-REDIS_PORT = 6379
+
+
 REDIS_DB = 0
 REDIS_PASSWORD = None
 
@@ -314,21 +274,3 @@ Q_CLUSTER = {
     },
 }
 
-# Q_CLUSTER = {
-#     'name': 'myproject',
-#     'workers': 8,
-#     'recycle': 500,
-#     'timeout': 60,
-#     'compress': True,
-#     'save_limit': 250,
-#     'queue_limit': 500,
-#     'cpu_affinity': 1,
-#     'label': 'Django Q',
-#     'redis': {
-#         'host': '127.0.0.1',
-#         'port': 6379,
-#         'db': 0, }
-# }
-# CRONJOBS = [
-#     ('*/1 * * * *', 'salesforce.cron.print_hello')
-# ] 

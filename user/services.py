@@ -59,7 +59,7 @@ def get_tokens_for_user(user,account):
 
     '''This view is used to create token for user'''
     access_token = AccessToken()
-    access_token.lifetime = timedelta(seconds=account.token_expires_in_minutes)
+    access_token.lifetime = timedelta(seconds=account.token_expires_in_seconds)
     token = access_token.for_user(user)
     refresh = RefreshToken.for_user(user)
     return {

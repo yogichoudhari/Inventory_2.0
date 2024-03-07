@@ -8,6 +8,8 @@ WORKDIR /api
 
 COPY . .
 
+COPY ./inventory_management_system/settings_local_dockerized.py /api/inventory_management_system/settings.py
+
 
 RUN apk update && \
     apk add --no-cache build-base python3-dev postgresql-dev

@@ -2,6 +2,7 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from django.contrib.auth.models import User
 from .models import User as CustomUser,Account, Role
@@ -145,7 +146,7 @@ def verify_user_otp(request):
         return Response(response_template(STATUS_FAILED),error=f"Something went wrong! {str(e)}.",status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(["POST"])
-def login(request):
+def get_token(request):
     '''This view function is used for login and when user
     user logins he will be provided with the Authentication Token
     '''
@@ -161,18 +162,18 @@ def login(request):
         account = user_main_object.account
         token = get_tokens_for_user(user,account)
         user = CustomUser.objects.get(user=user)
-        user_logged_in.send(sender=login,request=request,user=user,login='success')
+        user_logged_in.send(sender=get_token,request=request,user=user,login='success')
         return Response(response_template(STATUS_SUCCESS,message='user logged in successfully', token=token),status=status.HTTP_200_OK)
     else:
         user = User.objects.filter(username=username).first()
         if user:
             user_obj = CustomUser.objects.filter(user=user).first()
-            user_logged_in.send(sender=login,request=request,user=user_obj,login='failed')     
+            user_logged_in.send(sender=get_token,request=request,user=user_obj,login='failed')     
     return Response(response_template(STATUS_FAILED,error=f'Incorrect password or username'),status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST","GET"])
-def get_access_token(request):
+def refresh_token(request):
     pass
 
 @api_view(['POST'])
@@ -246,3 +247,5 @@ def user_roles(request):
         return Response(response_template(STATUS_SUCCESS,data=role_serialize.data),status=status.HTTP_200_OK)
     except Exception as e:
         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),status=status.HTTP_400_BAD_REQUEST)
+    
+    
