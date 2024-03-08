@@ -6,28 +6,38 @@ from django.contrib.auth.models import User
 from payment.services import assign_subscription_to_user
 from user.services import create_stripe_customer
 from inventory_management_system.utils import send_email
+from .models import EncryptionKeyId, AccountCredentials
 import requests
-import urllib.parse
 import logging
+import boto3
 import pdb
-import time
-import stripe
+from django.db import transaction
+
 
 
 
 logger = logging.getLogger('watchtower')
-CLIENT_ID = config('SALESFORCE_CLIENT_ID')
-CLIENT_SECRET = config('SALESFORCE_CLIENT_SECRET')
 REDIRECT_URI = config("SALESFORCE_REDIRECT_URI")
 base_url = "https://webkorps5-dev-ed.develop.my.salesforce.com"
 
-# Function to get authorization dialog URL
-def get_auth_dialog_url():
-   # Combine base URL, authorization endpoint, response type, redirect URI, and client ID
-   url = f"{base_url}/services/oauth2/authorize?response_type=code&redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}"
-   return url  # Return the generated URL
 
-def get_access_token(code):
+def get_client_credentials(admin_user):
+    account = admin_user.account
+    sf_cred_obj = AccountCredentials.objects.filter(account=account).first()
+
+    if sf_cred_obj:
+        decrypted_client_id = decrypt_data(sf_cred_obj.client_id,account)
+        decrypted_client_secret = decrypt_data(sf_cred_obj.client_secret,account)
+        return decrypted_client_id, decrypted_client_secret
+    else:
+        return None, None
+
+def get_auth_dialog_url(admin_user):
+    CLIENT_ID,_ = get_client_credentials(admin_user)
+    url = f"{base_url}/services/oauth2/authorize?response_type=code&redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}"
+    return url  
+def get_access_token(code,admin_user):
+    CLIENT_ID,CLIENT_SECRET = get_client_credentials(admin_user)
     headers = {
                "content-type": "application/json"
                }
@@ -45,6 +55,7 @@ def get_access_token(code):
     return response.json()
     
 def fetch_salesforce_users(admin_user):
+    pdb.set_trace()
     try:
         endpoint ="/services/data/v59.0/chatter/users/"
         url = f'{base_url}{endpoint}'
@@ -53,10 +64,11 @@ def fetch_salesforce_users(admin_user):
         response = requests.get(url,headers=headers)
         
         if response.status_code==200:
-            process_salesforce_users(admin_user,response)
+            with transaction.atomic():
+                process_salesforce_users(admin_user,response)
             
         elif response.status_code==401:
-            new_acccess_token = refresh_access_token()
+            new_acccess_token = refresh_access_token(admin_user)
             cache.set("salesforce_access_token",new_acccess_token)
             
     except Exception as e :
@@ -68,8 +80,8 @@ def fetch_salesforce_users(admin_user):
         logger.error(f'error occured while updating the user as {str(e)}')
 
 
-def refresh_access_token():
-    pdb.set_trace()
+def refresh_access_token(admin_user):
+    CLIENT_ID, CLIENT_SECRET = get_client_credentials(admin_user)
     refresh_access_token_url = f"{base_url}/services/oauth2/token"
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
@@ -86,6 +98,7 @@ def refresh_access_token():
 
 
 def process_salesforce_users(admin_user,response):
+    pdb.set_trace()
     users = response.json()['users']
     role = Role.objects.get(name='Customer')
     account = admin_user.account
@@ -113,10 +126,13 @@ def check_valid_user(user):
         return False
 
 def create_user_from_salesforce_users(user_data,role,account):
+    pdb.set_trace()
     username = user_data.get('username', '')
     first_name = user_data.get('firstName', '')
     last_name = user_data.get('lastName', '')
-    phone = user_data.get('phoneNumbers', [''])[0]
+    phone = user_data.get('phoneNumbers', [])
+    if phone:
+        phone = phone[0]
     email = user_data.get('email', '')
     address = user_data.get('address', {})
     
@@ -136,7 +152,7 @@ def create_user_from_salesforce_users(user_data,role,account):
     
     user_stripe_id = create_stripe_customer(user)
     user.stripe_id = user_stripe_id
-    _,subscription_instance = assign_subscription_to_user(user,"monthly","Standard")
+    _,subscription_instance = assign_subscription_to_user(user,billing_id=1,product_id=1)
     user.subscription = subscription_instance
     user.save()
     user_dict = {}
@@ -145,7 +161,30 @@ def create_user_from_salesforce_users(user_data,role,account):
 
             
                         
+ 
+
+def encrypt_data(data, account):
+    client = boto3.client('kms')
+    keyid = EncryptionKeyId.objects.filter(account=account).first()
+    if keyid:
+        byte_data = data.encode('utf-8')
+        response = client.encrypt(
+        KeyId=keyid.keyid,
+        Plaintext=byte_data
+        )
+        encrypted_data = response['CiphertextBlob']
+        return encrypted_data
+    
+def decrypt_data(data,account):
+    client = boto3.client('kms')
+    keyid = EncryptionKeyId.objects.filter(account=account).first()
+    if keyid:
+        byte_data = data.tobytes()
+        response = client.decrypt(
+        KeyId=keyid.keyid,
+        CiphertextBlob=byte_data
+        )
+        decrypted_data = response['Plaintext']
+        return decrypted_data
     
 
-
-    

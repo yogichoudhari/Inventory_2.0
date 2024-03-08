@@ -7,6 +7,8 @@ from datetime import datetime
 from inventory_management_system.utils import send_email
 logger = logging.getLogger("main")
 def assign_subscription_to_user(user,billing_id,product_id):
+    import pdb
+    pdb.set_trace()
     try:
         price = SubscriptionPlan.objects.filter(id=billing_id).first()
         product = Subscription.objects.filter(id=product_id).first()
