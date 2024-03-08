@@ -79,7 +79,7 @@ class Permission(models.Model):
 class User(models.Model):
     user = models.OneToOneField(BuiltInUser, on_delete=models.CASCADE, related_name="extra_user_fields")
     role = models.ForeignKey(Role,on_delete=models.CASCADE)
-    phone = models.CharField(validators=[phone_validator],max_length=10,null=False)
+    phone = models.CharField(validators=[phone_validator],max_length=10,null=True)
     city = models.CharField(choices=cities,max_length=50,null=True)
     state = models.CharField(choices=state_choices, max_length=35,null=True)
     account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)

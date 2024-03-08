@@ -14,9 +14,11 @@ from django.core.cache import cache
 from salesforce.services import fetch_salesforce_users, encrypt_data
 from user.models import User as CustomUser
 from .models import EncryptionKeyId, AccountCredentials
+from django.contrib.auth.models import User as AuthUser
 import boto3
 import xmltodict
 import logging
+
 
 logger = logging.getLogger('watchtower')
 client = boto3.client("kms")
@@ -52,10 +54,13 @@ def get_salesforce_users(request):
 
 
 @api_view(["GET", "POST"])
-def create_user(request):
+def create_user(request,id):
     try:
         dict = xmltodict.parse(request.body)
         logger.info(f'user created on the salesforce: {dict}')
+        user = AuthUser.objects.get(id=id)
+        admin_user = CustomUser.objects.get(user=user)
+        fetch_salesforce_users(admin_user)
         return HttpResponse("""
 					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 					<soapenv:Body>
@@ -69,7 +74,7 @@ def create_user(request):
         logger.exception(f'exception occured : {str(e)}')
         return Response(response_template(STATUS_FAILED, message=f'error occured: {str(e)}'), status=status.HTTP_400_BAD_REQUEST)
         
-        
+
 
 import pdb
 @api_view(["GET"])

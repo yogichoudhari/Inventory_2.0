@@ -1,22 +1,23 @@
-from decouple import config
-from django.core.cache import cache
+
 from payment.services import assign_subscription_to_user
 from user.models import User as CustomUser,Role
 from django.contrib.auth.models import User
 from payment.services import assign_subscription_to_user
 from user.services import create_stripe_customer
-from inventory_management_system.utils import send_email
 from .models import EncryptionKeyId, AccountCredentials
+from django.db import transaction
+from django_q.tasks import async_task
+from decouple import config
+from django.core.cache import cache
 import requests
 import logging
 import boto3
 import pdb
-from django.db import transaction
-
-
 
 
 logger = logging.getLogger('watchtower')
+
+
 REDIRECT_URI = config("SALESFORCE_REDIRECT_URI")
 base_url = "https://webkorps5-dev-ed.develop.my.salesforce.com"
 
@@ -55,7 +56,6 @@ def get_access_token(code,admin_user):
     return response.json()
     
 def fetch_salesforce_users(admin_user):
-    pdb.set_trace()
     try:
         endpoint ="/services/data/v59.0/chatter/users/"
         url = f'{base_url}{endpoint}'
@@ -70,13 +70,15 @@ def fetch_salesforce_users(admin_user):
         elif response.status_code==401:
             new_acccess_token = refresh_access_token(admin_user)
             cache.set("salesforce_access_token",new_acccess_token)
+            fetch_salesforce_users(admin_user)
             
     except Exception as e :
         template_name = "salesforce_user.html"
         subject= "Salesforce user synchronization in Application"
         email = admin_user.user.email
         context = {"error":f'{str(e)}',"admin":admin_user}
-        send_email(context,email,template_name,subject)
+        async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
+        # send_email(context,email,template_name,subject)
         logger.error(f'error occured while updating the user as {str(e)}')
 
 
@@ -98,7 +100,6 @@ def refresh_access_token(admin_user):
 
 
 def process_salesforce_users(admin_user,response):
-    pdb.set_trace()
     users = response.json()['users']
     role = Role.objects.get(name='Customer')
     account = admin_user.account
@@ -112,7 +113,8 @@ def process_salesforce_users(admin_user,response):
         email = admin_user.user.email
         context = {"users":users_arr,"admin":admin_user}
         template_name = "salesforce_user.html"
-        send_email(context,email,template_name,subject)
+        async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
+        # send_email(context,email,template_name,subject)
     else:
         logger.info(f'Users are up to date updated')
         
@@ -126,13 +128,14 @@ def check_valid_user(user):
         return False
 
 def create_user_from_salesforce_users(user_data,role,account):
-    pdb.set_trace()
     username = user_data.get('username', '')
     first_name = user_data.get('firstName', '')
     last_name = user_data.get('lastName', '')
     phone = user_data.get('phoneNumbers', [])
     if phone:
         phone = phone[0]
+    else:
+        phone = None
     email = user_data.get('email', '')
     address = user_data.get('address', {})
     
