@@ -10,7 +10,8 @@ from django.dispatch import receiver
 from .signals import user_logged_in
 from .models import UserLoggedInActivity
 from datetime import timedelta
-
+from salesforce.models import EncryptionKeyId
+import boto3
 #log configuration 
 logging.basicConfig(filename="logfile.log",style='{',level=logging.DEBUG,format="{asctime} - {lineno}-- {message}")
 logger = logging.getLogger(__name__)
@@ -66,3 +67,11 @@ def get_tokens_for_user(user,account):
         'refresh': str(refresh),
         'access': str(token),
     }
+
+
+def create_admin_data_encryption_key(admin):
+    client = boto3.client('kms')
+    response = client.create_key()
+    key_id = response.get('KeyMetadata').get('KeyId')
+    key_id_obj = EncryptionKeyId.objects.create(account=admin.account, keyid=key_id)
+    key_id_obj.save()

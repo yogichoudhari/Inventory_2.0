@@ -5,6 +5,7 @@ class AccountCredentials(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     client_id = models.BinaryField()
     client_secret = models.BinaryField()
+    base_url = models.URLField()
 
     
 

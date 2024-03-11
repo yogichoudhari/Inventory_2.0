@@ -2,29 +2,24 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
 from django.contrib.auth.models import User
 from .models import User as CustomUser,Account, Role
 from django.contrib import auth
+from rest_framework import status
 from .serializers import (CustomUserSerializer,
-                          LoginSerializer, 
                           UpdateCustomUserSerializer,
                           AdminUserSerializer,
                           PermissionSerializer,RoleSerializer)
 from django.db import transaction
 from django.core.cache import cache
-from inventory_management_system.utils import (
-                                               send_otp_via_email,
-                                               response_template, send_email)
+from inventory_management_system.utils import ( send_otp_via_email,
+                                               response_template)
 from django_q.tasks import async_task
-from .services import grant_permission, create_stripe_customer,get_tokens_for_user
+from .services import (grant_permission, create_stripe_customer,get_tokens_for_user,
+                       create_admin_data_encryption_key)
 from payment.services import assign_subscription_to_user
-from datetime import datetime
 from decouple import config
 import stripe
-import json
-import pdb
 import logging
 from .signals import user_logged_in
 
@@ -54,10 +49,10 @@ def register_admin(request):
                 with transaction.atomic():
                     created_user_instance = serialized.save()
                     stripe_id = create_stripe_customer(created_user_instance)
+                    create_admin_data_encryption_key(created_user_instance)
                     created_user_instance.stripe_id = stripe_id
                     created_user_instance.save()
-                    # async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
-                    send_otp_via_email(created_user_instance)
+                    async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
                 return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),status=status.HTTP_201_CREATED)
             
     except Exception as e:

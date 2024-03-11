@@ -13,13 +13,11 @@ import requests
 import logging
 import boto3
 import pdb
-
+import xmltodict
 
 logger = logging.getLogger('watchtower')
 
 
-REDIRECT_URI = config("SALESFORCE_REDIRECT_URI")
-base_url = "https://webkorps5-dev-ed.develop.my.salesforce.com"
 
 
 def get_client_credentials(admin_user):
@@ -29,16 +27,22 @@ def get_client_credentials(admin_user):
     if sf_cred_obj:
         decrypted_client_id = decrypt_data(sf_cred_obj.client_id,account)
         decrypted_client_secret = decrypt_data(sf_cred_obj.client_secret,account)
-        return decrypted_client_id, decrypted_client_secret
+        base_url = sf_cred_obj.base_url
+        return base_url, decrypted_client_id, decrypted_client_secret
     else:
         return None, None
 
 def get_auth_dialog_url(admin_user):
-    CLIENT_ID,_ = get_client_credentials(admin_user)
-    url = f"{base_url}/services/oauth2/authorize?response_type=code&redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}"
+    BASE_URL,CLIENT_ID,_ = get_client_credentials(admin_user)
+    id = admin_user.id
+    CLIENT_ID = CLIENT_ID.decode('utf-8')
+    REDIRECT_URI = f'https://localhost:8000/api/salesforce/oauth/{id}/callback'
+    url = f"{BASE_URL}/services/oauth2/authorize?response_type=code&redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}"
     return url  
-def get_access_token(code,admin_user):
-    CLIENT_ID,CLIENT_SECRET = get_client_credentials(admin_user)
+def get_access_token(code,admin_user,admin_id):
+    ID = admin_id                                                                                                                                                                 
+    BASE_URL,CLIENT_ID,CLIENT_SECRET = get_client_credentials(admin_user)
+    REDIRECT_URI = f"https://localhost:8000/api/salesforce/oauth/{ID}/callback"
     headers = {
                "content-type": "application/json"
                }
@@ -48,18 +52,20 @@ def get_access_token(code,admin_user):
         'code':code,
         'client_id':CLIENT_ID,
         'client_secret':CLIENT_SECRET,
-        'redirect_uri':'https://localhost:8000/api/salesforce/oauth/callback'
+        'redirect_uri':REDIRECT_URI
     }
-    access_tokenn_url = f"{base_url}/services/oauth2/token"
-    pdb.set_trace()
+    access_tokenn_url = f"{BASE_URL}/services/oauth2/token"
     response = requests.post(access_tokenn_url,params=payload,headers=headers)
     return response.json()
     
 def fetch_salesforce_users(admin_user):
     try:
+        username = admin_user.user.username
+        sf_cred_obj = AccountCredentials.objects.filter(account=admin_user.account).first()
+        BASE_URL = sf_cred_obj.base_url
         endpoint ="/services/data/v59.0/chatter/users/"
-        url = f'{base_url}{endpoint}'
-        access_token = cache.get('salesforce_access_token')
+        url = f'{BASE_URL}{endpoint}'
+        access_token = cache.get(f'salesforce_access_token_{username}')
         headers = {'Authorization':f"Bearer {access_token}"}
         response = requests.get(url,headers=headers)
         
@@ -69,7 +75,7 @@ def fetch_salesforce_users(admin_user):
             
         elif response.status_code==401:
             new_acccess_token = refresh_access_token(admin_user)
-            cache.set("salesforce_access_token",new_acccess_token)
+            cache.set(f"salesforce_access_token_{username}",new_acccess_token)
             fetch_salesforce_users(admin_user)
             
     except Exception as e :
@@ -78,19 +84,19 @@ def fetch_salesforce_users(admin_user):
         email = admin_user.user.email
         context = {"error":f'{str(e)}',"admin":admin_user}
         async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
-        # send_email(context,email,template_name,subject)
         logger.error(f'error occured while updating the user as {str(e)}')
 
 
 def refresh_access_token(admin_user):
-    CLIENT_ID, CLIENT_SECRET = get_client_credentials(admin_user)
-    refresh_access_token_url = f"{base_url}/services/oauth2/token"
+    username = admin_user.user.username
+    BASE_URL ,CLIENT_ID, CLIENT_SECRET = get_client_credentials(admin_user)
+    refresh_access_token_url = f"{BASE_URL}/services/oauth2/token"
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
     data = {
         'grant_type': 'refresh_token',
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
-        'refresh_token': cache.get("salesforce_refresh_token")
+        'refresh_token': cache.get(f"salesforce_refresh_token_{username}")
     }
     response = requests.post(url=refresh_access_token_url,data=data,headers=headers)
     if response.status_code==200:
@@ -114,7 +120,6 @@ def process_salesforce_users(admin_user,response):
         context = {"users":users_arr,"admin":admin_user}
         template_name = "salesforce_user.html"
         async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
-        # send_email(context,email,template_name,subject)
     else:
         logger.info(f'Users are up to date updated')
         
@@ -191,3 +196,14 @@ def decrypt_data(data,account):
         return decrypted_data
     
 
+
+def add_user_from_salesforce(admin_user,xml_data):
+    data_dict = xmltodict.parse(xml_data)
+    sf_user_info = data_dict["soapenv:Envelope"]["soapenv:Body"]["notifications"]["Notification"]["sObject"]
+    modified_sObject_data = {}
+    for key, value in sf_user_info.items():
+        modified_key = key.replace("sf:", "").lower()
+        modified_sObject_data[modified_key] = value
+    
+    logger.info(f"user data which is created in salesforce: {modified_sObject_data}")
+    

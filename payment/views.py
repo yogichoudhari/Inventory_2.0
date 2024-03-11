@@ -74,27 +74,6 @@ def payment_history(request):
     return Response(response_template(STATUS_SUCCESS,data=payment_history_list),
                     status=status.HTTP_200_OK)
 
-
-# @api_view(["POST"])
-# @permission_classes([IsAuthenticated, IsAdminUser])
-# def create_plan(request):
-#     try:
-#         response = stripe.Product.create(
-#         name=f'{request.data.get("name")}',
-#         default_price_data={
-#         "currency":'inr',
-#         "recurring":{
-#         "interval":'year',
-#         'interval_count':1
-#         },
-#         "unit_amount":int(request.data.get('price')*100)
-#         }
-#         )
-#         plan_obj = SubscriptionPlan.objects.create(name=response.name,product_id=response.id)
-#         plan_obj.save()
-#         return Response(response_template(STATUS_SUCCESS,response=response))
-#     except Exception as e:
-#         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'))
     
 
 # def get_subscription(request):
@@ -240,12 +219,6 @@ def plans(request):
     account = user.account
     subscriptions = Subscription.objects.filter(account=account)
     subscriptions_plan = SubscriptionPlan.objects.filter(product__in=subscriptions)
-    
-    # subscription_data = []
-    # for subscription in subscriptions:
-    #     subscription_plans = SubscriptionPlan.objects.filter(product=subscription)
-    #     subscription_dict = model_to_dict(subscription)
-    #     subscription_plan_dict = model_to_dict(subscription_plans)
     subscription_serializer = SubscriptionPlanSerializer(subscriptions_plan,many=True)
     return Response(response_template(STATUS_SUCCESS,data=subscription_serializer.data),
                     status=status.HTTP_200_OK)

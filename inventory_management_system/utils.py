@@ -1,5 +1,4 @@
-import pdb
-from rest_framework_simplejwt.tokens import RefreshToken
+
 from django.core.cache import cache
 import random
 from django.core.mail import EmailMultiAlternatives

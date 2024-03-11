@@ -213,12 +213,18 @@ EMAIL_HOST_USER = 'yogigurjar73542@gmail.com'
 EMAIL_HOST_PASSWORD = 'rpvzudgsagchbdfv'
 
 
-CLOUDWATCH_AWS_ID = config('AWS_ID')
-CLOUDWATCH_AWS_KEY = config('AWS_KEY')
+
+
+# AWS CLOUDWATCH LOGGIN CONFIGURATION 
+
+
+AWS_ID = config('AWS_ID')
+AWS_KEY = config('AWS_KEY')
 AWS_DEFAULT_REGION = 'ap-southeast-2'
+
 logger_boto3_session = boto3.setup_default_session(
-    aws_access_key_id=CLOUDWATCH_AWS_ID,
-    aws_secret_access_key=CLOUDWATCH_AWS_KEY,
+    aws_access_key_id=AWS_ID,
+    aws_secret_access_key=AWS_KEY,
     region_name=AWS_DEFAULT_REGION,
 )
 # Loggin Configuration '
