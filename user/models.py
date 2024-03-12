@@ -59,7 +59,7 @@ class Role(models.Model):
 
 
 def phone_validator(value):
-    if len(value)>10 or len(value)<10:
+    if len(value)>14 or len(value)<14:
         raise ValidationError("phone number should be 10 digit")
     try:
         if type(int(value))==int:
@@ -79,7 +79,7 @@ class Permission(models.Model):
 class User(models.Model):
     user = models.OneToOneField(BuiltInUser, on_delete=models.CASCADE, related_name="extra_user_fields")
     role = models.ForeignKey(Role,on_delete=models.CASCADE)
-    phone = models.CharField(validators=[phone_validator],max_length=10,null=True)
+    phone = models.CharField(validators=[phone_validator],max_length=14,null=True)
     city = models.CharField(choices=cities,max_length=50,null=True)
     state = models.CharField(choices=state_choices, max_length=35,null=True)
     account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)
