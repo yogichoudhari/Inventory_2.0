@@ -257,7 +257,7 @@ LOGGING = {
             "filename": "app.log", 
             "formatter": "local",
         },
-        "console": {"class": "logging.StreamHandler", "formatter": "aws",},
+        "console": {"class": "logging.StreamHandler", "formatter": "aws",}
     },
     "loggers": {
         # Use this logger to send data just to Cloudwatch

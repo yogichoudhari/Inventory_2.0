@@ -18,7 +18,7 @@ import pdb
 import xmltodict
 
 
-logger = logging.getLogger('file')  # Initialize the logger
+logger = logging.getLogger('file_logger')  # Initialize the logger
 
 API_VERSION = 'v59.0'
 
@@ -261,7 +261,7 @@ def process_salesforce_users(admin_user, response):
         if check_valid_user(user,admin_user):
             user_data = {key.lower():value for key,value in user.items()}
             if user_data.get('phonenumbers',[]):
-                user_data['phonenumbers'] = user_data['phonenumbers'][0]["phonenumber"]
+                user_data['phonenumbers'] = user_data['phonenumbers'][0]["phoneNumber"]
             else:
                 del user_data['phonenumbers']
             user_obj = create_user_from_salesforce_users(user_data,role,account)
@@ -281,8 +281,9 @@ def process_salesforce_users(admin_user, response):
         
 
 def check_valid_user(user,admin_user):
+    flag = User.objects.filter(email=user.get('email')).exists()
     if ( user['email'] not in ['noreply@example.com',admin_user.user.email] 
-        and user['email'] not in [user.email for user in User.objects.all()]):
+        and not flag):
         return True
     else:
         return False
@@ -295,11 +296,9 @@ def create_user_from_salesforce_users(user_data,role,account):
         phone = user_data.get('phonenumbers',None)
         email = user_data.get('email', '')
         address = user_data.get('address', {})
-        
         base_user_obj = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name)
         base_user_obj.set_password('123456')
         base_user_obj.save()
-        "file_logger": {"level": "INFO", "handlers": ["file"], "propagate": False,},
         user = CustomUser.objects.create(
             user=base_user_obj,
             phone=phone,
@@ -308,7 +307,7 @@ def create_user_from_salesforce_users(user_data,role,account):
             city=address.get('city', ''),
             state=address.get('state', ''),
             is_verified=True
-        )
+        )  
         
         user_stripe_id = create_stripe_customer(user)
         user.stripe_id = user_stripe_id
@@ -317,6 +316,7 @@ def create_user_from_salesforce_users(user_data,role,account):
         user.save()
         user_dict = {}
         user_dict.update({"username":username,'first_name':first_name,"last_name":last_name,"email":email})
+        logger.info("New user created successfully with salesforce data")
         return user_dict
     except Exception as e:
         logger.error(f'an error occured while creating the user: {str(e)}')
