@@ -237,6 +237,10 @@ LOGGING = {
             "format": "%(asctime)s [%(levelname)-8s] %(message)s [%(pathname)s:%(lineno)d]",
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },
+        "local": {
+            "format": "%(asctime)s [%(levelname)-8s] %(message)s [%(pathname)s:%(lineno)d]",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
     },
     "handlers": {
         "watchtower": {
@@ -247,11 +251,18 @@ LOGGING = {
             "stream_name": f"logs",
             "formatter": "aws",
         },
+        "file": {
+            "level": "INFO",
+            "class":"logging.FileHandler",
+            "filename": "app.log", 
+            "formatter": "local",
+        },
         "console": {"class": "logging.StreamHandler", "formatter": "aws",},
     },
     "loggers": {
         # Use this logger to send data just to Cloudwatch
-        "watchtower": {"level": "INFO", "handlers": ["watchtower"], "propogate": False,}
+        "watchtower": {"level": "INFO", "handlers": ["watchtower"], "propogate": False,},
+        "file_logger": {"level": "INFO", "handlers": ["file"], "propagate": False,}
     },
 }
 

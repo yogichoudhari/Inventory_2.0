@@ -18,7 +18,7 @@ import pdb
 import xmltodict
 
 
-logger = logging.getLogger('watchtower')  # Initialize the logger
+logger = logging.getLogger('file')  # Initialize the logger
 
 API_VERSION = 'v59.0'
 
@@ -56,9 +56,6 @@ def get_auth_dialog_url(admin_user):
             
             # if none then raise the exception 
             raise Exception("No Salesforce credentials available.")
-        
-        # Decode the byte data
-        CLIENT_ID = CLIENT_ID.decode('utf-8')
         
         # construct the redirect URL with the version number app
         REDIRECT_URI = f'https://localhost:8000/api/salesforce/oauth/{admin_user.id}/callback'
@@ -203,15 +200,12 @@ def refresh_access_token(admin_user, auth_obj):
             # if none then raise the exception 
             raise Exception("insufficient client credentials to process the request")
         
-        # Retrive the salesforce auth object pertaining to the admin user
-        sf_auth_obj = Auth.objects.filter(account=admin_user.account).first()
-        
         # check if the salesforce auth object exists if not then raise an exception
         if not auth_obj:
             raise Exception("admin does not have the salesforce auth credentials")
         
         # Decrypt the access token 
-        decrypted_refresh_token = decrypt_data(sf_auth_obj.refresh_token)
+        decrypted_refresh_token = decrypt_data(auth_obj.refresh_token)
         
         # raise an exception if the access token is not decrypted
         if not decrypted_refresh_token:
@@ -295,7 +289,6 @@ def check_valid_user(user,admin_user):
 
 def create_user_from_salesforce_users(user_data,role,account):
     try:
-        logger.info(f"here is the user_data we are getting from the salesforce: {user_data}")
         username = user_data.get('username', '')
         first_name = user_data.get('firstname', '')
         last_name = user_data.get('lastname', '')
@@ -306,7 +299,7 @@ def create_user_from_salesforce_users(user_data,role,account):
         base_user_obj = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name)
         base_user_obj.set_password('123456')
         base_user_obj.save()
-        
+        "file_logger": {"level": "INFO", "handlers": ["file"], "propagate": False,},
         user = CustomUser.objects.create(
             user=base_user_obj,
             phone=phone,
@@ -361,7 +354,8 @@ def decrypt_data(data):
             KeyId=keyid.keyid,
             CiphertextBlob=byte_data
             )
-            decrypted_data = response['Plaintext']
+            decrypted_byte_data = response['Plaintext']
+            decrypted_data = decrypted_byte_data.decode('utf-8')
             return decrypted_data
         else:
             return None
