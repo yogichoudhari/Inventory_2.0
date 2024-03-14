@@ -253,34 +253,60 @@ def refresh_access_token(admin_user, auth_obj):
         
 
 def process_salesforce_users(admin_user, response):
-    users = response.json()['users']
-    role = Role.objects.get(name='Customer')
-    account = admin_user.account
-    users_arr = []
-    for user in users:
-        if check_valid_user(user,admin_user):
-            user_data = {key.lower():value for key,value in user.items()}
-            if user_data.get('phonenumbers',[]):
-                user_data['phonenumbers'] = user_data['phonenumbers'][0]["phoneNumber"]
-            else:
-                del user_data['phonenumbers']
-            user_obj = create_user_from_salesforce_users(user_data,role,account)
-            if user_obj:
-                users_arr.append(user_obj)
-            else:
-                raise Exception(f"an error occured while creating the user")
-    if users_arr:
-        subject= "Salesforce user synchronization in Application"
-        email = admin_user.user.email
-        context = {"users":users_arr,"admin":admin_user}
-        template_name = "salesforce_user.html"
-        async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
-    else:
-        logger.info(f'Users are up to date updated')
+    try:
+        # Get all users from salesforce response
+        users = response.json()['users']
         
+        # Role instace to be assigned to the users
+        role = Role.objects.get(name='Customer')
+        if not role:
+            raise Exception("Customer role does not exist in the database")
+        
+        # Iterate over all the user from the users response append it in user_arr list
+        users_arr = []
+        for user in users:
+            # check if the user already exist in the database or the email is valid
+            if check_valid_user(user,admin_user):
+                
+                # lowercase all the keys in the user dictionary 
+                user_data = {key.lower():value for key,value in user.items()}
+                
+                # check if the phonenumbers exixt or not
+                if user_data.get('phonenumbers',[]):
+                    # if yes then get the very first number from the nubers list 
+                    user_data['phonenumbers'] = user_data['phonenumbers'][0]["phoneNumber"]
+                    
+                # if phonenumber does not exist then delete the phonenumbers key
+                else:
+                    del user_data['phonenumbers']
+                # function for creating the user from every salesforce user object
+                user_obj = create_user_from_salesforce_users(user_data,role,admin_user.account)
+                
+                # if succesfully created then append it in the users_arr list
+                if user_obj:
+                    users_arr.append(user_obj)
+                # or else raise the exception if the user_obj was not created 
+        
+        # check if user_arr list contains any created user
+        # if it contains the created user then send an email to admin with list of created user
+        if users_arr:
+            subject= "Salesforce user synchronization in Application"
+            email = admin_user.user.email
+            context = {"users":users_arr,"admin":admin_user}
+            template_name = "salesforce_user.html"
+            async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
+        # if list is empty means no new user is created and database is up to date
+        else:
+            logger.info(f'Users are up to date updated')
+    except Exception as e:
+        logger.error(f'error occured: {str(e)}')       
         
 
+
+
 def check_valid_user(user,admin_user):
+    # check if the user alredy exist or the email is autogenereated then return False
+    # otherwise return True
     flag = User.objects.filter(email=user.get('email')).exists()
     if ( user['email'] not in ['noreply@example.com',admin_user.user.email] 
         and not flag):

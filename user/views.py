@@ -22,6 +22,7 @@ from decouple import config
 import stripe
 import logging
 from .signals import user_logged_in
+import xmltodict
 
 
 # Create your views here.
@@ -234,13 +235,17 @@ def users(request):
     except Exception as e:
         logger.exception(f"An Error Occured: {str(e)}")
 
-@api_view(["GET"])
+
+@api_view(["GET","POST"])
 def user_roles(request):
     try:
         roles = Role.objects.all()
         role_serialize = RoleSerializer(roles,many=True)
+        logger.info("Returning User Roles Successfully!")
         return Response(response_template(STATUS_SUCCESS,data=role_serialize.data),status=status.HTTP_200_OK)
     except Exception as e:
         return Response(response_template(STATUS_FAILED,error=f'{str(e)}'),status=status.HTTP_400_BAD_REQUEST)
+
+
     
     

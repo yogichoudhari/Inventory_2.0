@@ -124,13 +124,13 @@ USE_TZ = True
 
 # Redis Cache Configuration 
 
-REDIS_HOST = 'redis'
+REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": "redis://localhost:6379/1",
     }
 }
 #  stripe payment keys
@@ -270,6 +270,8 @@ LOGGING = {
 
 
 
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
 REDIS_DB = 0
 REDIS_PASSWORD = None
 
