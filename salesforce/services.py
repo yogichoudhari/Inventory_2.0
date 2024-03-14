@@ -8,6 +8,7 @@ from django.db import transaction
 from .models import Auth
 from datetime import datetime
 from django.utils import timezone
+from user.services import create_user_from_external_resources
 from django_q.tasks import async_task
 from decouple import config
 from django.core.cache import cache
@@ -280,7 +281,7 @@ def process_salesforce_users(admin_user, response):
                 else:
                     del user_data['phonenumbers']
                 # function for creating the user from every salesforce user object
-                user_obj = create_user_from_salesforce_users(user_data,role,admin_user.account)
+                user_obj = create_user_from_external_resources(user_data,role,admin_user.account)
                 
                 # if succesfully created then append it in the users_arr list
                 if user_obj:
@@ -314,7 +315,7 @@ def check_valid_user(user,admin_user):
     else:
         return False
 
-def create_user_from_salesforce_users(user_data,role,account):
+def create_user_from_external_resources(user_data,role,account):
     try:
         username = user_data.get('username', '')
         first_name = user_data.get('firstname', '')
@@ -322,6 +323,9 @@ def create_user_from_salesforce_users(user_data,role,account):
         phone = user_data.get('phonenumbers',None)
         email = user_data.get('email', '')
         address = user_data.get('address', {})
+        is_verified = user_data.get('is_verified',True)
+        if is_verified:
+            is_verified = True
         base_user_obj = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name)
         base_user_obj.set_password('123456')
         base_user_obj.save()
@@ -332,7 +336,7 @@ def create_user_from_salesforce_users(user_data,role,account):
             role=role,
             city=address.get('city', ''),
             state=address.get('state', ''),
-            is_verified=True
+            is_verified=is_verified
         )  
         
         user_stripe_id = create_stripe_customer(user)
@@ -403,7 +407,7 @@ def add_user_from_salesforce(admin_user,xml_data):
     logger.info(f"here is the recent user created using salesforce: {modified_sObject_data}")
     role = Role.objects.get(name='Customer')
     account = admin_user.account
-    user_obj = create_user_from_salesforce_users(modified_sObject_data, role, account)
+    user_obj = create_user_from_external_resources(modified_sObject_data, role, account)
     user_obj = [user_obj]
     if user_obj:
         subject= "New User is created through the salesforce"

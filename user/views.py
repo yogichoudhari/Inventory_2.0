@@ -19,12 +19,12 @@ from .services import (grant_permission, create_stripe_customer,get_tokens_for_u
                        create_admin_data_encryption_key)
 from payment.services import assign_subscription_to_user
 from decouple import config
+from .services import create_user_from_external_resources, default_password_not_updated
 import stripe
 import logging
 from .signals import user_logged_in
-import xmltodict
-
-
+import openpyxl
+from salesforce.services import check_valid_user
 # Create your views here.
 
 
@@ -34,7 +34,7 @@ STATUS_SUCCESS = "success"
 STATUS_FAILED = "failed" 
 #log configuration 
 # logger = logging.getLogger("main")
-logger = logging.getLogger("watchtower")
+logger = logging.getLogger("file_logger")
 #stripe configuration 
 stripe.api_key = config("STRIPE_SECRET_KEY")
 @api_view(['POST'])
@@ -143,30 +143,39 @@ def verify_user_otp(request):
     
 @api_view(["POST"])
 def get_token(request):
-    '''This view function is used for login and when user
-    user logins he will be provided with the Authentication Token
-    '''
+    try:
+        '''This view function is used for login and when user
+        user logins he will be provided with the Authentication Token
+        '''
 
-    username = request.data.get('username')
-    password = request.data.get('password')
-    user = auth.authenticate(username=username,
-                             password=password)
-    extra_user_fields = CustomUser.objects.filter(user=user).first()
-    if user and extra_user_fields.is_verified:
-        auth.login(request,user)
-        user_main_object = CustomUser.objects.filter(user=user).first()
-        account = user_main_object.account
-        token = get_tokens_for_user(user,account)
-        user = CustomUser.objects.get(user=user)
-        user_logged_in.send(sender=get_token,request=request,user=user,login='success')
-        return Response(response_template(STATUS_SUCCESS,message='user logged in successfully', token=token),status=status.HTTP_200_OK)
-    else:
-        user = User.objects.filter(username=username).first()
-        if user:
-            user_obj = CustomUser.objects.filter(user=user).first()
-            user_logged_in.send(sender=get_token,request=request,user=user_obj,login='failed')     
-    return Response(response_template(STATUS_FAILED,error=f'Incorrect password or username'),status=status.HTTP_400_BAD_REQUEST)
-
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = auth.authenticate(username=username,
+                                 password=password)
+        user_extended_fields = CustomUser.objects.filter(user=user).first()
+        if default_password_not_updated(user):
+            pass
+            return Response(response_template(STATUS_FAILED,message='please reset your password first'),status=status.HTTP_401_UNAUTHORIZED)
+        elif user and user_extended_fields.is_verified:
+            auth.login(request,user)
+            user_main_object = CustomUser.objects.filter(user=user).first()
+            account = user_main_object.account
+            token = get_tokens_for_user(user,account)
+            user = CustomUser.objects.get(user=user)
+            user_logged_in.send(sender=get_token,request=request,user=user,login='success')
+            return Response(response_template(STATUS_SUCCESS,message='user logged in successfully', token=token),status=status.HTTP_200_OK)
+        elif not user_extended_fields.is_verified:
+            send_otp_via_email(user_extended_fields)
+            return Response(response_template(STATUS_FAILED,message='An email is sent for the otp verification'),status=status.HTTP_401_UNAUTHORIZED)
+        else:
+            user = User.objects.filter(username=username).first()
+            if user:
+                user_obj = CustomUser.objects.filter(user=user).first()
+                user_logged_in.send(sender=get_token,request=request,user=user_obj,login='failed')     
+        return Response(response_template(STATUS_FAILED,error=f'Incorrect password or username'),status=status.HTTP_401_UNAUTHORIZED)
+    except Exception as e:
+        logger.error("Error in getting authentication token"+ str(e)) 
+        return Response(response_template(STATUS_FAILED,message=str(e)),status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST","GET"])
 def refresh_token(request):
@@ -249,3 +258,41 @@ def user_roles(request):
 
     
     
+
+@api_view(['GET',"POST"])
+@permission_classes([IsAdminUser])
+def excel_to_dict(request):
+    try:
+        admin_user = CustomUser.objects.get(user=request.user)
+        role = Role.objects.filter(name="Customer").first()
+        # path = '/home/dell/Desktop/python training/Django Rest Framework/project05/User.xlsx'
+        xl_file = request.FILES['xl']
+        print(xl_file)
+        wb = openpyxl.load_workbook(xl_file)
+        ws = wb.active
+        max_rows = ws.max_row
+        first_row = True
+        for row in ws.iter_rows(max_col=7, values_only=True):
+            if first_row:
+                first_row = False
+                continue
+            username, first_name,last_name, city, state,email, phone = row
+            user_dict =  {}
+            user_dict['username'] = username
+            user_dict['firstname'] = first_name
+            user_dict['lastname'] = last_name
+            user_dict['email'] = email
+            user_dict['address'] = {"city":city,"state":state}
+            user_dict['phonenumbers'] = phone
+            if check_valid_user(user_dict, admin_user):
+                create_user_from_external_resources(user_dict, role, admin_user.account)
+
+        return Response(response_template(STATUS_SUCCESS,message=f"addedd {max_rows} successfully"),
+                        status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(response_template(STATUS_FAILED,error=f'An error occured as: {str(e)}')
+                        , status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET'])
+def csv_to_dict(request):
+    pass

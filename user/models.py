@@ -59,7 +59,7 @@ class Role(models.Model):
 
 
 def phone_validator(value):
-    if len(value)>14 or len(value)<14:
+    if len(value)>14 or len(value)<10:
         raise ValidationError("phone number should be 10 digit")
     try:
         if type(int(value))==int:
