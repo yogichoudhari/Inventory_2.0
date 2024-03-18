@@ -1,16 +1,34 @@
 from rest_framework import serializers
-from .models import User as CustomUser, Account, Role, Permission
-from django.contrib.auth.models import User
+from .models import User, Account, Role, Permission
+from payment.models import Subscription
 from indian_cities.dj_city import cities
 from user.models import state_choices
-from datetime import time
+import logging
+from datetime import datetime
+
+
+logger = logging.getLogger('file_logger')
+
+class AccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Account
+        fields = ['name','token_expires_in_seconds']
+
+    def create(self,validated_data):
+        admin = self.context.get('user_obj')
+        account_instance =  Account.objects.create(admin=admin,**validated_data)
+        account_instance.save()
+        return account_instance
+    
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
+    account = AccountSerializer()
     class Meta:
         model = User
         fields = ["username", "password", "password2", 
-                  "first_name", "last_name", "email"]
+                  "first_name", "last_name", "email",
+                  "phone", 'address', "role", "account"]
 
     def validate(self,attrs):
         # username = attrs.get('username')
@@ -20,10 +38,10 @@ class UserSerializer(serializers.ModelSerializer):
         #     raise serializers.ValidationError("Invalid username")
         password = attrs.get('password')
         password2 = attrs.get('password2')
-
         if password!=password2:
             raise serializers.ValidationError('password does not match')
         email = attrs.get("email")
+        print(email)
         user = User.objects.filter(email=email).first()
         if user is not None:
             raise serializers.ValidationError("email already registered")
@@ -31,19 +49,38 @@ class UserSerializer(serializers.ModelSerializer):
         # password_pattern = re.compile(regex)
         # if not re.match(password_pattern,password):
         #     raise serializers.ValidationError("password should be 6-20 charachters alphanumerical")
-
         return attrs
-    
     def create(self,validated_data):
-        password = validated_data.get('password')
-        validated_data.pop("password2",None)
-        if self.context.get('is_admin'):
-            user = User.objects.create_superuser(**validated_data)
-        else:
-            user = super().create(validated_data)
-        user.set_password(password)
-        user.save()
-        return user
+            validated_data.pop("password2",None)
+            account_instance = self.context.get("account",None)
+            role_id = validated_data.pop("role",None)
+            permission_set_ids = validated_data.pop("permission_set_ids",None)
+            subscription_id = validated_data.pop("subscription",None)
+            permission_instances = Permission.objects.filter(id__in=[permission_set_ids])
+            subscription_instance = Subscription.objects.filter(id=subscription_id).first() 
+            role_instance = Role.objects.filter(id=role_id).first()
+            account_data = validated_data.pop('account', None)
+            if self.context.get('is_admin'):
+                if account_data:
+                    user_instance = User.objects.create_superuser(account=account_instance,
+                                                                         role=role_instance,
+                                                                         **validated_data)
+                    account_serialize = AccountSerializer(data=account_data,context={'user_obj':user_instance})
+                    if account_serialize.is_valid():
+                        account_instance = account_serialize.save()
+                        user_instance.account = account_instance
+                        user_instance.save()
+                else:
+                    raise serializers.ValidationError("account details details not provided")
+            else:
+                user_instance = User.objects.create_user(account=account_instance,
+                                                          subscription=subscription_instance,
+                                                                     role=role_instance,
+                                                                    **validated_data)
+                for permission_set in permission_instances:
+                    user_instance.permissions.add(permission_set)
+                user_instance.save(update_fields=['permissions'])
+            return user_instance
 
 class RoleSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='pk')
@@ -51,41 +88,7 @@ class RoleSerializer(serializers.ModelSerializer):
         model = Role
         fields = ["id","name"]
 
-class CustomUserSerializer(serializers.ModelSerializer):
-    role = serializers.IntegerField()
-    user = UserSerializer()
-    class Meta:
-        model = CustomUser
-        fields = ["user", "phone", "role", "state", 
-                  "city", "account","is_verified"]
 
-    def validate(self,data):
-        state_value = data.get('state')
-        city_value = data.get('city')
-        for state,city_list in cities:
-            if state == state_value:
-                for city,_ in city_list:
-                    if city==city_value:
-                        break
-                else:
-                    raise serializers.ValidationError("please enter correct city")
-        return data
-
-    def create(self,validated_data):
-        user_data = validated_data.pop("user")
-        role_id = validated_data.pop("role")
-        account_instance = self.context.get("account")
-        role_obj = Role.objects.get(id=role_id)
-        if not role_obj:
-            raise serializers.ValidationError("incorrect role id provided")
-        user_serialize = UserSerializer(data=user_data,context={"is_admin":False})
-        if user_serialize.is_valid():
-            user_instance = user_serialize.save()
-        custom_user , created = CustomUser.objects.get_or_create(user=user_instance,
-                                                                account=account_instance,
-                                                                 role=role_obj,
-                                                                **validated_data)
-        return custom_user
 
 class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -100,14 +103,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
-class AccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = ['name','token_expires_in_seconds']
 
-    def create(self,validated_data):
-        admin = self.context.get('user_obj')
-        return Account.objects.create(admin=admin,**validated_data)
     
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -131,11 +127,11 @@ class PermissionSerializer(serializers.ModelSerializer):
         validated_data['permission_set'] = permission_dict
         return super().create(validated_data)
     
-class UpdateCustomUserSerializer(serializers.ModelSerializer):
+class UpdateUserSerializer(serializers.ModelSerializer):
     user = UpdateUserSerializer()
     account = AccountSerializer(read_only=True)
     class Meta:
-        model = CustomUser
+        model = User
         fields = ["id", "user", "phone", "state", "city", 'account']
 
     def update(self,instance,validated_data):
@@ -151,50 +147,46 @@ class UpdateCustomUserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
-class AdminUserSerializer(serializers.ModelSerializer):
-    account = AccountSerializer()
-    user = UserSerializer()
-    class Meta:
-        model = CustomUser
-        fields = ['user', 'phone', 'state', 'city', "account"]
-    def validate(self,data):
-        state_value = data.get('state')
-        city_value = data.get('city')
-        for state,city_list in cities:
-            if state == state_value:
-                for city,_ in city_list:
-                    if city==city_value:
-                        break
-                else:
-                    raise serializers.ValidationError("please enter correct city")
-        return data
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField()
+    new_password = serializers.CharField(max_length=128)
+    confirm_new_password = serializers.CharField(max_length=128)
     
-    def create(self,validated_data):
-        user_data = validated_data.pop('user')
-        account_data = validated_data.pop('account')
-        user_serialize = UserSerializer(data=user_data,context={'is_admin':True})
-        role_obj = Role.objects.get(name="Admin")
-        if user_serialize.is_valid():
-            user_instance = user_serialize.save()
-        admin_user , created = CustomUser.objects.get_or_create(user=user_instance,role=role_obj,**validated_data)
-        account_serialize = AccountSerializer(data=account_data,context={'user_obj':admin_user})
-        if account_serialize.is_valid():
-            account_instance = account_serialize.save()
-            admin_user.account = account_instance
-            admin_user.save()
-        return admin_user
+    def validate(self, attrs):
+        current_password = attrs.get('current_password', None)
+        new_password = attrs.get('new_password', None)
+        confirm_new_password = attrs.get('confirm_new_password', None)
+        user = self.instance
+        if not user.check_password(current_password):
+            raise serializers.ValidationError("incorrect password entered")
+        elif new_password!=confirm_new_password:
+            raise serializers.ValidationError("password does not match confirm password")
+        return attrs
     
-class LoginSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.last_password_change = datetime.now()
+        instance.save()
+        return instance
+        
+    
+class ResetPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField(max_length=128)
+    confirm_new_password = serializers.CharField(max_length=128)    
 
     def validate(self, attrs):
-        username = attrs.get('username')
-        password = attrs.get('password')
-        # try:
-        #     user = User.objects.get(username=username)
-        # except User.DoesNotExist:
-        #     raise serializers.ValidationError("incorrect username")
-        # if not user.check_password(password):
-        #     raise serializers.ValidationError("incorrect password entered")
-        # return attr
+        new_password = attrs.get('new_password', None)
+        confirm_new_password = attrs.get('confirm_new_password', None)
+        user = self.instance
+        if new_password!=confirm_new_password:
+            raise serializers.ValidationError("password does not match confirm password")
+        return attrs
+    def update(self, instance, validated_data):
+        instance.set_password(validated_data['new_password'])
+        instance.last_password_change = datetime.now()
+        instance.save()
+        return instance
+        
+        
+        

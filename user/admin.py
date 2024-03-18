@@ -16,6 +16,6 @@ class PermissionAdmin(admin.ModelAdmin):
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
-    list_display=["id", "user", "phone", "role", "state", "city",
+    list_display=["id", "username","email", "phone", "role", "address",
                    "account","stripe_id",
                    "is_verified","subscription_id"]

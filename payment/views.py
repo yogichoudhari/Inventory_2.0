@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework import status
 from product.models import Product
 from .models import PaymentLog, Subscription, SubscriptionPlan, Coupon,UserSubscriptionDetail
-from user.models import User as CustomUser
+from user.models import User as User
 from .serializers import (PaymentLogSerializer, SubscriptionSerializer, SubscriptionPlanSerializer)
 from django.forms.models import model_to_dict
 import stripe
@@ -38,7 +38,7 @@ def payment_success(request,session_id):
             # async_task("inventory_management_system.utils.send_email",q_options=kwargs)
             send_email(kwargs)
         product.save()
-        user_instance = CustomUser.objects.get(id=session.metadata.get('user_id'))
+        user_instance = User.objects.get(id=session.metadata.get('user_id'))
         PaymentLog.objects.create(amount=total_amount,customer_stripe_id=session.customer,
                                 user=user_instance,status=STATUS_SUCCESS,product=product)
         return Response(response_template(STATUS_SUCCESS,
@@ -52,7 +52,7 @@ def payment_failed(request,session_id):
     if session['payment_status']=="unpaid":
         total_amount = session.amount_total/100
         product = Product.objects.get(pk=session.metadata.get('product_id'))
-        user_instance = CustomUser.objects.get(id=session.metadata.get('user_id'))
+        user_instance = User.objects.get(id=session.metadata.get('user_id'))
         PaymentLog.objects.create(amount=total_amount,customer_stripe_id=session.customer,
                                 user=user_instance,status=STATUS_FAILED,product=product)
         return Response(response_template(STATUS_FAILED,
@@ -66,7 +66,7 @@ def payment_failed(request,session_id):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def payment_history(request):
-    user = CustomUser.objects.get(user=request.user)
+    user = User.objects.get(user=request.user)
     payment_history_instances = PaymentLog.objects.filter(user=user)
     serialize_payments_log = PaymentLogSerializer(payment_history_instances,
                                                   many=True)
@@ -77,7 +77,7 @@ def payment_history(request):
     
 
 # def get_subscription(request):
-#         user = CustomUser.objects.get(user=request.user)
+#         user = User.objects.get(user=request.user)
 #         product_id = request.data.get('product_id')
 #         product = stripe.Product.retrieve(id=product_id)
 #         session = stripe.checkout.Session.create(
@@ -115,7 +115,7 @@ def payment_history(request):
 def create_subscription_product(request):
     try:
         product_obj = stripe.Product.create(name=request.data.get('name'))
-        admin_user = CustomUser.objects.get(user=request.user)
+        admin_user = User.objects.get(user=request.user)
         subscription_product = Subscription.objects.create(account=admin_user.account,name=product_obj.name,
                                     product_id=product_obj.id)
         plans = request.data.get("plans")
@@ -153,8 +153,8 @@ def create_subscription(request):
         billing_id = request.data.get('billing_id')
         product_id = request.data.get('product_id')
         user_id = request.data.get('user_id')
-        admin_user = CustomUser.objects.get(user=request.user)
-        user = CustomUser.objects.get(id=user_id,account=admin_user.account)
+        admin_user = User.objects.get(user=request.user)
+        user = User.objects.get(id=user_id,account=admin_user.account)
         response,subscription_instance = services.assign_subscription_to_user(user,billing_id,product_id)
         user.subscription=subscription_instance
         user.save()
@@ -171,8 +171,8 @@ def create_subscription(request):
 def modify_subscription(request):
     try: 
         data = request.data
-        admin_user = CustomUser.objects.get(user=request.user)
-        user = CustomUser.objects.get(id=data.get('user_id'),account=admin_user.account)
+        admin_user = User.objects.get(user=request.user)
+        user = User.objects.get(id=data.get('user_id'),account=admin_user.account)
         subscription = stripe.Subscription.retrieve(user.subscription_id)
         product_id = subscription['items']['data'][0]['price']['product']
         if data.get("product_name"):
@@ -197,7 +197,7 @@ def modify_subscription(request):
 @permission_classes([IsAdminUser,IsAuthenticated])
 def cancel_subscription(request,user_id):
     try:
-        user = CustomUser.objects.filter(id=user_id).first()
+        user = User.objects.filter(id=user_id).first()
         if user:
             user_subscription_id = user.subscription.subscription_id
             response = stripe.Subscription.cancel(user_subscription_id)
@@ -215,7 +215,7 @@ def cancel_subscription(request,user_id):
 
 @api_view(['GET'])
 def plans(request):
-    user = CustomUser.objects.get(user=request.user)
+    user = User.objects.get(user=request.user)
     account = user.account
     subscriptions = Subscription.objects.filter(account=account)
     subscriptions_plan = SubscriptionPlan.objects.filter(product__in=subscriptions)

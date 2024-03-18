@@ -11,7 +11,7 @@ from rest_framework import status
 from .models import Product
 from payment.models import Subscription,SubscriptionPlan,UserSubscriptionDetail
 from django.contrib.auth.models import User
-from user.models import User as CustomUser
+from user.models import User as User
 from django.contrib import auth
 from .serializers import (ProductSerializer, 
                           SearchedProductListSerializer)
@@ -39,13 +39,9 @@ redirect_uri = "http://localhost:8000/api/survey/oauth/callback"
 CLIENT_ID= config("CLIENT_ID")
 CLIENT_SECRET = config("CLIENT_SECRET")
 
-#log configuration 
-logging.basicConfig(filename="logfile.log",style='{',level=logging.DEBUG,format="{asctime} - {lineno}-- {message}")
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
 # Create your views here.
 
+logger = logging.getLogger('file_logger')
 
 
 @api_view(['GET'])
@@ -57,7 +53,7 @@ def product(request,id=None):
     or a list of all products.
     '''
     try:
-        user = CustomUser.objects.get(user=request.user)
+        user = request.user
         account = user.account
         if id:
             product = Product.objects.get(pk=id,account=account)
@@ -78,7 +74,7 @@ def product(request,id=None):
 @permission_classes([IsAuthenticated])
 def check_product(request):
     try:
-        user = CustomUser.objects.get(user=request.user)
+        user = request.user
         account = user.account
         search_param = request.query_params.get('param')
         if len(search_param)>=3:
@@ -109,7 +105,7 @@ def update_stock(request):
     updated by Administrator only.
     '''
     if not request.user.is_superuser and request.user.is_authenticated:
-        user = CustomUser.objects.get(user=request.user)
+        user = request.user
         try:
             permissions = user.permission.all()
             for permission in permissions:
@@ -148,7 +144,7 @@ def update_stock(request):
 @api_view(["POST"])
 def add_product(request):
     if not request.user.is_superuser and request.user.is_authenticated:
-        user_instance = CustomUser.objects.get(user=request.user)
+        user_instance = request.user
         try:
             permissions = user_instance.permission.all()
             for permission in permissions:
@@ -164,7 +160,7 @@ def add_product(request):
                              error="user do not have permission to product"),
                             status=status.HTTP_403_FORBIDDEN)
 
-    user_instance = CustomUser.objects.get(user=request.user)
+    user_instance = User.objects.get(user=request.user)
     serialize_product_data = ProductSerializer(data=request.data,
                                                many=type(request.data)==list,
                                                context={'user_instance':user_instance})
@@ -187,7 +183,7 @@ def add_product(request):
 def make_purchase(request, id):
     try:
         product_id = id
-        user = CustomUser.objects.get(user=request.user)
+        user = request.user
         user_id = user.id
         account = user.account
         async_task("product.services.sync_stripe_data",user)

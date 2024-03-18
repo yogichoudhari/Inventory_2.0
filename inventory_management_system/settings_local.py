@@ -5,7 +5,7 @@ from .settings import *
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'inventory',
+        'NAME': 'inventory101',
         'USER':'inventory_admin',
         'PASSWORD':"Physically11",
         'HOST':'localhost',

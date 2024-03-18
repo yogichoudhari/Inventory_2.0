@@ -1,5 +1,5 @@
 from payment.services import assign_subscription_to_user
-from user.models import User as CustomUser, Role
+from user.models import User as User, Role
 from django.contrib.auth.models import User
 from payment.services import assign_subscription_to_user
 from user.services import create_stripe_customer
@@ -154,7 +154,7 @@ def fetch_salesforce_users(admin_user):
     except Exception as e :
         template_name = "salesforce_user.html"
         subject= "Salesforce user synchronization in Application"
-        email = admin_user.user.email
+        email = admin_user.email
         context = {"error":f'{str(e)}',"admin":admin_user}
         async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
         logger.error(f'error occured while updating the user as {str(e)}')
@@ -292,7 +292,7 @@ def process_salesforce_users(admin_user, response):
         # if it contains the created user then send an email to admin with list of created user
         if users_arr:
             subject= "Salesforce user synchronization in Application"
-            email = admin_user.user.email
+            email = admin_user.email
             context = {"users":users_arr,"admin":admin_user}
             template_name = "salesforce_user.html"
             async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)
@@ -305,11 +305,11 @@ def process_salesforce_users(admin_user, response):
 
 
 
-def check_valid_user(user,admin_user):
+def check_valid_user(sf_user,admin_user):
     # check if the user alredy exist or the email is autogenereated then return False
     # otherwise return True
-    flag = User.objects.filter(email=user.get('email')).exists()
-    if ( user['email'] not in ['noreply@example.com',admin_user.user.email] 
+    flag = User.objects.filter(email=sf_user.get('email')).exists()
+    if ( sf_user['email'] not in ['noreply@example.com',admin_user.email] 
         and not flag):
         return True
     else:
@@ -329,7 +329,7 @@ def create_user_from_external_resources(user_data,role,account):
         base_user_obj = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name)
         base_user_obj.set_password('123456')
         base_user_obj.save()
-        user = CustomUser.objects.create(
+        user = User.objects.create(
             user=base_user_obj,
             phone=phone,
             account=account,
@@ -411,7 +411,7 @@ def add_user_from_salesforce(admin_user,xml_data):
     user_obj = [user_obj]
     if user_obj:
         subject= "New User is created through the salesforce"
-        email = admin_user.user.email
+        email = admin_user.email
         context = {"users":user_obj,"admin":admin_user}
         template_name = "salesforce_user.html"
         async_task("inventory_management_system.utils.send_email",context,email,template_name,subject)

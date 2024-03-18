@@ -1,12 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User as BuiltInUser
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from django.core.exceptions import ValidationError
-from indian_cities.dj_city import cities
-from django.dispatch import receiver
-from django.db.models.signals import post_delete
 from django.utils import timezone
 import datetime
 # from payment.models import UserSubscriptionDetail 
+
 state_choices = (("Andhra Pradesh","Andhra Pradesh"),
                  ("Arunachal Pradesh ","Arunachal Pradesh "),
                  ("Assam","Assam"),
@@ -43,10 +41,14 @@ state_choices = (("Andhra Pradesh","Andhra Pradesh"),
                  ("Lakshadweep","Lakshadweep"),
                  ("Delhi","Delhi"),
                  ("Puducherry","Puducherry"))
-
-
-
-
+def phone_validator(value):
+    try:
+        if len(value)>14 or len(value)<10:
+            raise ValidationError("please provide valid phone number")
+        if type(int(value))==int:
+            return value
+    except ValueError:
+        raise ValidationError("number should be numerical")
 class Role(models.Model):
     role_choices = (
         ('Admin',"Admin"),
@@ -58,14 +60,103 @@ class Role(models.Model):
         return self.name
 
 
-def phone_validator(value):
-    if len(value)>14 or len(value)<10:
-        raise ValidationError("phone number should be 10 digit")
-    try:
-        if type(int(value))==int:
-            return value
-    except ValueError:
-        raise ValidationError("number should be numerical")
+class MyUserManager(BaseUserManager):
+    def create_user(self, username, email, account, first_name=None, 
+                    last_name=None, address=None, role=None, phone=None, subscription=None, 
+                    stripe_id=None, password=None, is_imported=False ):
+        """
+        Creates and saves a User with the given email, date of
+        birth and password.
+        """
+        if not email:
+            raise ValueError("Users must have an email address")
+
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
+            account=account,
+            address=address,
+            role=role,
+            phone=phone,
+            subscription=subscription,
+            stripe_id=stripe_id,
+            password=password,
+            is_imported=is_imported
+        )
+
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, account=None,  
+                         first_name=None, last_name=None , 
+                         role=None, address=None, phone=None, subscription=None, 
+                         stripe_id=None, password=None, is_imported=False):
+        """
+        Creates and saves a superuser with the given email, date of
+        birth and password.
+        """
+        user = self.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            email=email,
+            username=username,
+            account=account,
+            address=address,
+            role=role,
+            phone=phone,
+            subscription=subscription,
+            stripe_id=stripe_id,
+            password=password,
+            is_imported=is_imported
+        )
+        user.is_admin = True
+        user.save(using=self._db)
+        return user
+
+
+class User(AbstractBaseUser):
+    username = models.CharField(max_length=128, unique=True, null=False)
+    email = models.EmailField(
+        max_length=255,
+        unique=True
+    )
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    password = models.CharField(max_length=128)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, null=True, blank=True)
+    phone = models.CharField(validators=[phone_validator], max_length=14, null=True)
+    address = models.CharField(max_length=280, blank=True, null=True)
+    account = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='users', null=True)
+    permissions = models.ManyToManyField("Permission", related_name="permission")
+    subscription = models.ForeignKey("payment.UserSubscriptionDetail", on_delete=models.SET_NULL, blank=True, null=True)
+    stripe_id = models.CharField(max_length=55, null=True, blank=True)
+    is_imported = models.BooleanField(default=False)
+    last_password_change = models.DateTimeField(null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    
+    
+    objects = MyUserManager()
+    
+    USERNAME_FIELD = "username"
+    REQUIRED_FIELDS = ["email", "account"]
+
+    def __str__(self):
+        return self.email
+
+    @property
+    def is_staff(self):
+        "Is the user a member of staff?"
+        # Simplest possible answer: All admins are staff
+        return self.is_admin
+
+
+
+
     
 
 class Permission(models.Model):
@@ -76,22 +167,7 @@ class Permission(models.Model):
         permission_set  = {k:v for k,v in self.permission_set.items() if v==True}
         return str(permission_set) + "_" +str(self.related_to)
         
-class User(models.Model):
-    user = models.OneToOneField(BuiltInUser, on_delete=models.CASCADE, related_name="extra_user_fields")
-    role = models.ForeignKey(Role,on_delete=models.CASCADE)
-    phone = models.CharField(validators=[phone_validator],max_length=14,null=True)
-    city = models.CharField(choices=cities,max_length=50,null=True)
-    state = models.CharField(choices=state_choices, max_length=35,null=True)
-    account = models.ForeignKey('Account',on_delete=models.SET_NULL,related_name='users',null=True)
-    permissions = models.ManyToManyField(Permission,related_name="permission",blank=True)
-    subscription = models.ForeignKey("payment.UserSubscriptionDetail",on_delete=models.SET_NULL,null=True)
-    stripe_id = models.CharField(max_length=55,null=True)
-    is_verified = models.BooleanField(default=False)
-    def __str__(self):
-        return self.user.username
-@receiver(post_delete,sender=User)
-def delete_builtin_user(sender,instance,**kwargs):
-    instance.user.delete()
+
     
     
 

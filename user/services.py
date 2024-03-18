@@ -1,4 +1,4 @@
-from .models import Permission,User as CustomUser
+from .models import Permission,User as User
 from django.db.models import Q
 from django.conf import settings
 import logging
@@ -14,13 +14,17 @@ from datetime import timedelta
 from salesforce.models import EncryptionKeyId
 from payment.services import assign_subscription_to_user
 import boto3
+from django.core.cache import cache
 from django.db import transaction
 #log configuration 
 logger = logging.getLogger('file_logger')
 # granting permission to user 
 stripe.api_key = config("STRIPE_SECRET_KEY")
+
+
+
 def grant_permission(account,permission_id,user_id):
-    user_instance = CustomUser.objects.filter(account=account,pk=user_id).first()
+    user_instance = User.objects.filter(account=account,pk=user_id).first()
     if not user_instance:
         return False
     permission_instance = Permission.objects.filter(pk=permission_id).first()
@@ -33,8 +37,8 @@ def grant_permission(account,permission_id,user_id):
 def create_stripe_customer(created_user_instance):
     try:
         customer_stripe_response = stripe.Customer.create(
-            name = created_user_instance.user.username,
-            email = created_user_instance.user.email
+            name = created_user_instance.username,
+            email = created_user_instance.email
         )
         pm = stripe.PaymentMethod.create(
           type="card",
@@ -90,24 +94,16 @@ def create_user_from_external_resources(user_data,role,account):
             phone = user_data.get('phonenumbers',None)
             email = user_data.get('email', '')
             address = user_data.get('address', {})
-            base_user_obj = User.objects.create_user(username=username, email=email, first_name=first_name, last_name=last_name)
-            base_user_obj.set_password('123456')
-            base_user_obj.save()
-            user = CustomUser.objects.create(
-                user=base_user_obj,
-                phone=phone,
-                account=account,
-                role=role,
-                city=address.get('city', ''),
-                state=address.get('state', ''),
-                is_verified=False
-            )  
+            user_instance = User.objects.create_user(username=username, phone=phone, account=account,
+                role=role, city=address.get('city', ''), state=address.get('state', ''),
+                is_verified=False, email=email, first_name=first_name, last_name=last_name, is_imported=True)
+            
 
-            user_stripe_id = create_stripe_customer(user)
-            user.stripe_id = user_stripe_id
-            _,subscription_instance = assign_subscription_to_user(user,billing_id=1,product_id=1)
-            user.subscription = subscription_instance
-            user.save()
+            user_stripe_id = create_stripe_customer(user_instance)
+            user_instance.stripe_id = user_stripe_id
+            _,subscription_instance = assign_subscription_to_user(user_instance,billing_id=1,product_id=1)
+            user_instance.subscription = subscription_instance
+            user_instance.save()
             user_dict = {}
             user_dict.update({"username":username,'first_name':first_name,"last_name":last_name,"email":email})
             logger.info("New user created successfully with salesforce data")
@@ -118,7 +114,28 @@ def create_user_from_external_resources(user_data,role,account):
     
 
 def default_password_not_updated(user):
-    if not user.last_login and user.check_password('123456'):
+    if user.is_imported and user.last_password_change is None:
         return True
     else:
         return False
+        
+
+def verify_otp(otp,user_instance=None):
+    try:
+        # Check if user instance exists
+        if not user_instance:
+            raise Exception("Incorrect otp")
+        otp_key = "otp_"+str(user_instance.id)
+
+        # Check if OTP key exists in cache
+        if otp_key in cache:
+            stored_otp = cache.get(otp_key)
+            if otp==stored_otp:
+                cache.delete(otp_key)
+                return True
+            else: 
+                return False
+        else:
+            raise Exception(f"otp is expired")
+    except Exception as e:
+        logger.error(f'an error occured during otp verification: {str(e)}')

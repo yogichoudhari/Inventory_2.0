@@ -10,7 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from user.models import User as CustomUser 
+from user.models import User as User 
 from product.models import Product
 from payment.models import PaymentLog
 from .models import Survey
@@ -84,7 +84,7 @@ def get_token(auth_code):
 def submit_feedback(request, product_id):
     try:        
 		# Extract User associated with the request
-        user = CustomUser.objects.get(user=request.user)
+        user = User.objects.get(user=request.user)
         
 		# Retrieve the Product using ID
         product = Product.objects.get(id=product_id)

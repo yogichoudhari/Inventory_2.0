@@ -12,7 +12,7 @@ from user.models import User
 from rest_framework import status
 from django.core.cache import cache
 from salesforce.services import encrypt_data
-from user.models import User as CustomUser
+from user.models import User as User
 from .models import AccountCredentials, Auth
 from django_q.tasks import async_task
 import boto3
@@ -22,10 +22,11 @@ import logging
 logger = logging.getLogger('watchtower')
 client = boto3.client("kms")
 @api_view(['GET', "POST"])
+@permission_classes([IsAdminUser])
 def auth_dialog(request):
    try:
        # get admin user
-       admin_user = User.objects.get(user=request.user) 
+       admin_user = request.user
        # get auth dialog url
        url = services.get_auth_dialog_url(admin_user) 
        # if url is None/False
@@ -86,10 +87,11 @@ def get_auth_token(request,id):
  
 
 @api_view(["POST", "GET"])
+@permission_classes([IsAdminUser])
 def get_salesforce_users(request):
     try:
         # Get the current user from the request
-        admin_user = CustomUser.objects.get(user=request.user)
+        admin_user = request.user
         
         # Check if the token for the admin user is valid
         if validate_token(admin_user):
@@ -111,7 +113,7 @@ def get_salesforce_users(request):
 def create_user(request,id):
     try:
         # Retrieve the admin user based on the provided id
-        admin_user = CustomUser.objects.get(id=int(id))
+        admin_user = User.objects.get(id=int(id))
         
         # Extract XML data from the request body
         xml_data = request.body
@@ -149,7 +151,7 @@ def add_salesforce_credentials(request):
     """
     try:
         # Extract admin user request user context
-        admin_user = User.objects.get(user=request.user)
+        admin_user = request.user
         
         # Extract Client Id from the request
         client_id = request.data.get('client_id', None)

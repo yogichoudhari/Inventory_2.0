@@ -2,29 +2,27 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import IsAdminUser,IsAuthenticated
-from django.contrib.auth.models import User
-from .models import User as CustomUser,Account, Role
+from .models import User ,Account, Role
 from django.contrib import auth
 from rest_framework import status
-from .serializers import (CustomUserSerializer,
-                          UpdateCustomUserSerializer,
-                          AdminUserSerializer,
-                          PermissionSerializer,RoleSerializer)
+from .serializers import (UserSerializer,
+                          UpdateUserSerializer,
+                          PermissionSerializer,RoleSerializer,
+                          ChangePasswordSerializer, ResetPasswordSerializer)
 from django.db import transaction
 from django.core.cache import cache
-from inventory_management_system.utils import ( send_otp_via_email,
-                                               response_template)
+from inventory_management_system.utils import  response_template
 from django_q.tasks import async_task
-from .services import (grant_permission, create_stripe_customer,get_tokens_for_user,
-                       create_admin_data_encryption_key)
+from .services import (grant_permission, create_stripe_customer,get_tokens_for_user)
 from payment.services import assign_subscription_to_user
 from decouple import config
-from .services import create_user_from_external_resources, default_password_not_updated
+from .services import create_user_from_external_resources, default_password_not_updated, verify_otp
 import stripe
 import logging
 from .signals import user_logged_in
 import openpyxl
 from salesforce.services import check_valid_user
+import pdb
 # Create your views here.
 
 
@@ -37,6 +35,7 @@ STATUS_FAILED = "failed"
 logger = logging.getLogger("file_logger")
 #stripe configuration 
 stripe.api_key = config("STRIPE_SECRET_KEY")
+
 @api_view(['POST'])
 def register_admin(request):
     '''This view function is being used by the admin user to 
@@ -45,15 +44,20 @@ def register_admin(request):
     try:
         if request.method=="POST":
             user_data = request.data
-            serialized = AdminUserSerializer(data=user_data)
+            serialized = UserSerializer(data=user_data, context={'is_admin':True})
             if serialized.is_valid(raise_exception=True):
                 with transaction.atomic():
                     created_user_instance = serialized.save()
                     stripe_id = create_stripe_customer(created_user_instance)
-                    create_admin_data_encryption_key(created_user_instance)
                     created_user_instance.stripe_id = stripe_id
                     created_user_instance.save()
-                    async_task("inventory_management_system.utils.send_otp_via_email",created_user_instance)
+                    kwargs = {
+                        "user": created_user_instance,
+                        "subject": "Account Verification",
+                        "template":"email_otp_template.html"
+                        
+                    }
+                    async_task("inventory_management_system.utils.send_otp_via_email", kwargs)
                 return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),status=status.HTTP_201_CREATED)
             
     except Exception as e:
@@ -67,11 +71,11 @@ def create_user(request):
             user_data = request.data
             billing_id = user_data['subscription']['billing_id']
             product_id = user_data['subscription']['product_id']
-            user_instance = request.user.extra_user_fields
+            user_instance = request.user
             account_instance = Account.objects.get(admin=user_instance)
             
             # Wrap the code in a try-except block for handling serializer errors
-            serialized = CustomUserSerializer(data=user_data,context={"user": user_instance, "account": account_instance})
+            serialized = UserSerializer(data=user_data,context={"user": user_instance, "account": account_instance})
             serialized.is_valid(raise_exception=True)
             with transaction.atomic():
                 created_user_instance = serialized.save()
@@ -96,10 +100,14 @@ def create_user(request):
 def resend_otp(request):
     try:
         email = request.data.get('email')
-        auth_user = User.objects.get(email=email)
-        user = CustomUser.objects.get(user=auth_user)
-        # async_task("inventory_management_system.utils.send_otp_via_email",user)
-        send_otp_via_email(user)
+        user = User.objects.get(email=email)
+        kwargs = {
+            "user": user,
+            "subject": "Account Verification",
+            "template":"email_otp_template.html"
+            
+        }
+        async_task("inventory_management_system.utils.send_otp_via_email", kwargs)
         return Response(response_template(STATUS_SUCCESS,message="otp is successfully sent"),status=status.HTTP_200_OK)
     except Exception as e:
         logger.error(f"an error occured : {str(e)}")
@@ -111,32 +119,16 @@ def resend_otp(request):
 def verify_user_otp(request):
     try:
         # Get OTP and user ID from request data
-        otp = request.data.get('otp')
+        otp = request.data.get('otp', None)
+        if not otp:
+            raise Exception(f'otp not provided')
         user_id = cache.get(otp)
-        
-        # Retrieve user instance
-        user_instance = CustomUser.objects.filter(id=user_id).first()
-        
-        # Check if user instance exists
-        if not user_instance:
-            raise Exception("Incorrect otp")
-        otp_key = "otp_"+str(user_instance.id)
-        
-        # Check if OTP key exists in cache
-        if otp_key in cache:
-            stored_otp = cache.get(otp_key)
-            
-            # Verify OTP
-            if otp==stored_otp:
-                # Mark user as verified
-                user_instance.is_verified=True
-                user_instance.save()
-                cache.delete(otp_key)
-                return Response(response_template(STATUS_SUCCESS,message="user is verified"), status=status.HTTP_200_OK)
-            else:
-                return Response(response_template(STATUS_FAILED,error="incorrect otp"),status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(response_template(STATUS_FAILED,error="otp is expired"),status=status.HTTP_400_BAD_REQUEST)
+        user_instance = User.objects.filter(id=user_id).first()
+        if verify_otp(otp, user_instance):
+            # Mark user as verified
+            user_instance.is_verified=True
+            user_instance.save()
+            return Response(response_template(STATUS_SUCCESS,message="user is verified"), status=status.HTTP_200_OK)
     except Exception as e:
         logger.error(f"An Error Occurred :{str(e)}")
         return Response(response_template(STATUS_FAILED),error=f"Something went wrong! {str(e)}.",status=status.HTTP_400_BAD_REQUEST)
@@ -147,55 +139,103 @@ def get_token(request):
         '''This view function is used for login and when user
         user logins he will be provided with the Authentication Token
         '''
-
         username = request.data.get('username')
         password = request.data.get('password')
         user = auth.authenticate(username=username,
                                  password=password)
-        user_extended_fields = CustomUser.objects.filter(user=user).first()
-        if default_password_not_updated(user):
-            pass
-            return Response(response_template(STATUS_FAILED,message='please reset your password first'),status=status.HTTP_401_UNAUTHORIZED)
-        elif user and user_extended_fields.is_verified:
-            auth.login(request,user)
-            user_main_object = CustomUser.objects.filter(user=user).first()
-            account = user_main_object.account
-            token = get_tokens_for_user(user,account)
-            user = CustomUser.objects.get(user=user)
-            user_logged_in.send(sender=get_token,request=request,user=user,login='success')
-            return Response(response_template(STATUS_SUCCESS,message='user logged in successfully', token=token),status=status.HTTP_200_OK)
-        elif not user_extended_fields.is_verified:
-            send_otp_via_email(user_extended_fields)
-            return Response(response_template(STATUS_FAILED,message='An email is sent for the otp verification'),status=status.HTTP_401_UNAUTHORIZED)
-        else:
-            user = User.objects.filter(username=username).first()
-            if user:
-                user_obj = CustomUser.objects.filter(user=user).first()
-                user_logged_in.send(sender=get_token,request=request,user=user_obj,login='failed')     
+        if user:
+            if not user.is_verified:
+                kwargs = {
+                    "user": user,
+                    "subject": "Account Verification",
+                    "template":"email_otp_template.html"
+                    
+                }
+                async_task("inventory_management_system.utils.send_otp_via_email", kwargs)
+                return Response(response_template(STATUS_SUCCESS,message='An email is sent for verification'),status=status.HTTP_201_CREATED)
+            if default_password_not_updated(user):
+                return Response(response_template(STATUS_FAILED,message='please reset your password first'),status=status.HTTP_401_UNAUTHORIZED)
+            elif user and user.is_verified:
+                auth.login(request,user)
+                account = user.account
+                token = get_tokens_for_user(user,account)
+                user_logged_in.send(sender=get_token,request=request,user=user,login='success')
+                return Response(response_template(STATUS_SUCCESS,message='user logged in successfully', token=token),status=status.HTTP_200_OK)
+            else:
+                user = User.objects.filter(username=username).first()
+                if user:
+                    user_logged_in.send(sender=get_token,request=request,user=user,login='failed')     
         return Response(response_template(STATUS_FAILED,error=f'Incorrect password or username'),status=status.HTTP_401_UNAUTHORIZED)
     except Exception as e:
         logger.error("Error in getting authentication token"+ str(e)) 
         return Response(response_template(STATUS_FAILED,message=str(e)),status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST","GET"])
-def refresh_token(request):
-    pass
+@permission_classes([IsAuthenticated])
+def change_password(request):
+    try:
+        password_serializer = ChangePasswordSerializer(request.user,data=request.data,partial=True)
+        if password_serializer.is_valid(raise_exception=True):
+            password_serializer.save()
+        return Response(response_template(STATUS_SUCCESS, message='password successfully changed'), status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        logger.exception(f'an error occured while changing the password: {str(e)}')
+        return Response(response_template(STATUS_FAILED, error=f'{str(e)}'))
 
+
+@api_view(['POST'])
+def send_password_reset_otp(request):
+    try:
+        email = request.data.get("email", None)
+        if not email:
+            raise Exception("please enter your email address")
+        user = User.objects.filter(email=email).first()
+        if not user:
+            raise Exception("please enter the email address which is registered with us")
+        kwargs = {
+                    "user": user,
+                    "subject" : "Password Reset Otp",
+                  "template":"password_reset_otp.html"
+                  }
+        async_task("inventory_management_system.utils.send_otp_via_email", kwargs)
+        return Response(response_template(STATUS_SUCCESS, message="password reset otp is successfull sent"), status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f'error occured while sending the password reset email otp')
+        return Response(response_template(STATUS_FAILED,error=f'{str(e)}'), status=status.HTT4)
+    
+@api_view(['POST'])
+def reset_password(request):
+    try:
+        otp = request.data.get('otp', None)
+        if not otp:
+            raise Exception(f'otp not provided')
+        user_id = cache.get(otp)
+        user_instance = User.objects.filter(id=user_id).first()
+        if verify_otp(otp, user_instance):
+            reset_password_serialzer = ResetPasswordSerializer(user_instance, data=request.data, partial=True)
+            if reset_password_serialzer.is_valid(raise_exception=True):
+                reset_password_serialzer.save()
+                return Response(response_template(STATUS_SUCCESS,message="your password has been successfully reset"),status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f'an error occured during password reset')
+        return Response(response_template(STATUS_FAILED, error=f'{str(e)}'), status=status.HTTP_400_BAD_REQUEST)
+        
 @api_view(['POST'])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def grant_permission_to_user(request):
     try:
         permission_id= request.data.get('permission_id')
         user_id = request.data.get('user_id')
-        admin_user = CustomUser.objects.get(user=request.user)
-        account = admin_user.account
-        granted = grant_permission(account=account,user_id=user_id,permission_id=permission_id)
+        admin_user = request.user
+        granted = grant_permission(account=admin_user.account,user_id=user_id,permission_id=permission_id)
         if granted:
             return Response(response_template(STATUS_SUCCESS,message="permission granted"),status=status.HTTP_201_CREATED)
         else:
             return Response(response_template(STATUS_FAILED,error="Invalid User or Permission id"), status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         logger.exceptions(e,f'exeptions occured -- {str(e)}')
+        
 
 
 @api_view(["POST"])
@@ -212,17 +252,16 @@ def create_permission_set(request):
 @permission_classes([IsAuthenticated])
 def user_profile(request):
     if request.method=='GET':
-        add_on_fields = request.user.extra_user_fields
-        add_on_fields_serialize = UpdateCustomUserSerializer(add_on_fields)
-        return Response(response_template(STATUS_SUCCESS,data=add_on_fields_serialize.data),status=status.HTTP_200_OK)
+        user = request.user
+        serialized_user = UpdateUserSerializer(user)
+        return Response(response_template(STATUS_SUCCESS,data=serialized_user.data),status=status.HTTP_200_OK)
         
     elif request.method=="PATCH":
-        user_instance = CustomUser.objects.get(user=request.user)
-        # permission = user_instance.permissions.get()
+        user_instance = User.objects.get(user=request.user)
         nested_user_data= request.data.get("user")
         nested_user_id = nested_user_data.get("id")
-        user_instance = CustomUser.objects.get(pk=id)
-        user_serialize = UpdateCustomUserSerializer(user_instance,data=request.data,partial=True,context={"user_id":nested_user_id})
+        user_instance = User.objects.get(pk=id)
+        user_serialize = UpdateUserSerializer(user_instance,data=request.data,partial=True,context={"user_id":nested_user_id})
         if user_serialize.is_valid():
             user_serialize.save()
             return Response(response_template(STATUS_SUCCESS,message="profile is updated successfully"),status=status.HTTP_201_CREATED)
@@ -236,10 +275,9 @@ def user_profile(request):
 @permission_classes([IsAdminUser,IsAuthenticated])
 def users(request):
     try:
-        user = CustomUser.objects.get(user=request.user)
-        account = user.related_account
-        users = CustomUser.objects.filter(account=account)
-        serialize_instances = UpdateCustomUserSerializer(users,many=True)
+        admin_user = User.objects.get(user=request.user)
+        users = User.objects.filter(account=admin_user.account)
+        serialize_instances = UpdateUserSerializer(users,many=True)
         return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),status=status.HTTP_200_OK)
     except Exception as e:
         logger.exception(f"An Error Occured: {str(e)}")
@@ -263,7 +301,7 @@ def user_roles(request):
 @permission_classes([IsAdminUser])
 def excel_to_dict(request):
     try:
-        admin_user = CustomUser.objects.get(user=request.user)
+        admin_user = User.objects.get(user=request.user)
         role = Role.objects.filter(name="Customer").first()
         # path = '/home/dell/Desktop/python training/Django Rest Framework/project05/User.xlsx'
         xl_file = request.FILES['xl']

@@ -1,4 +1,4 @@
-from user.models import User as CustomUser
+from user.models import User as User
 from payment.models import Subscription, SubscriptionPlan, Coupon, UserSubscriptionDetail
 import stripe
 import logging 

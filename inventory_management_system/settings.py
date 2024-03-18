@@ -78,17 +78,28 @@ WSGI_APPLICATION = 'inventory_management_system.wsgi.application'
 
 # Postgresql Database configuration
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "postgres",
+#         'USER': "postgres",
+#         'PASSWORD': "postgres",
+#         'HOST': 'backend',
+#         'PORT': '5432',
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': "postgres",
-        'USER': "postgres",
-        'PASSWORD': "postgres",
-        'HOST': 'backend',
-        'PORT': '5432',
+        'NAME': 'inventory',
+        'USER':'inventory_admin',
+        'PASSWORD':"Physically11",
+        'HOST':'localhost',
+        'PORT':'5432'
     }
 }
-
 
 
 # Password validation
@@ -201,7 +212,7 @@ REST_FRAMEWORK = {
     )
 }
 
-
+AUTH_USER_MODEL = "user.User"
 
 #Email Backend
 
