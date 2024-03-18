@@ -23,7 +23,6 @@ class AccountSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
     password = serializers.CharField(write_only=True)
-    account = AccountSerializer()
     class Meta:
         model = User
         fields = ["username", "password", "password2", 
@@ -41,7 +40,6 @@ class UserSerializer(serializers.ModelSerializer):
         if password!=password2:
             raise serializers.ValidationError('password does not match')
         email = attrs.get("email")
-        print(email)
         user = User.objects.filter(email=email).first()
         if user is not None:
             raise serializers.ValidationError("email already registered")
@@ -55,9 +53,10 @@ class UserSerializer(serializers.ModelSerializer):
             account_instance = self.context.get("account",None)
             role_id = validated_data.pop("role",None)
             permission_set_ids = validated_data.pop("permission_set_ids",None)
-            subscription_id = validated_data.pop("subscription",None)
-            permission_instances = Permission.objects.filter(id__in=[permission_set_ids])
-            subscription_instance = Subscription.objects.filter(id=subscription_id).first() 
+            if permission_set_ids:
+                permission_instances = Permission.objects.filter(id__in=permission_set_ids)
+            else:
+                permission_instances=None
             role_instance = Role.objects.filter(id=role_id).first()
             account_data = validated_data.pop('account', None)
             if self.context.get('is_admin'):
@@ -74,14 +73,30 @@ class UserSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError("account details details not provided")
             else:
                 user_instance = User.objects.create_user(account=account_instance,
-                                                          subscription=subscription_instance,
-                                                                     role=role_instance,
-                                                                    **validated_data)
-                for permission_set in permission_instances:
-                    user_instance.permissions.add(permission_set)
-                user_instance.save(update_fields=['permissions'])
+                                                        role=role_instance,**validated_data)
+                if permission_instances:
+                    for permission_set in permission_instances:
+                        user_instance.permissions.add(permission_set)
+                user_instance.save()
             return user_instance
-
+        
+    def update(self, instance, validated_data):
+        role_id = validated_data.pop("role",None)
+        permission_set_ids = validated_data.pop("permission_set_ids",None)
+        if permission_set_ids:
+            permission_instances = Permission.objects.filter(id__in=permission_set_ids)
+        else:
+            permission_instances=None
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.role = role_id
+        if permission_instances:
+            for permission_set in permission_instances:
+                instance.permissions.add(permission_set)
+        instance.save()
+        return instance
+        
+        
 class RoleSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='pk')
     class Meta:
@@ -132,7 +147,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     account = AccountSerializer(read_only=True)
     class Meta:
         model = User
-        fields = ["id", "user", "phone", "state", "city", 'account']
+        fields = ["username", "first_name", "last_name", "email",
+                  "phone", 'address', "role", "account"]
 
     def update(self,instance,validated_data):
         user_data = validated_data.pop("user")

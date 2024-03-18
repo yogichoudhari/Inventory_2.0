@@ -109,7 +109,7 @@ def update_stock(request):
         try:
             permissions = user.permission.all()
             for permission in permissions:
-                if permission.related_to=="Product":
+                if permission.related_to=="product":
                     permission_instance = permission  
             permission = permission_instance.permission_set.get('can_create')   
         except:
@@ -138,12 +138,13 @@ def update_stock(request):
                         status=status.HTTP_200_OK)
     else:
         return Response(response_template(STATUS_FAILED,
-                         message=f'{serialized.errrs}'),
+                         message=f'{serialized.errors}'),
                         status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(["POST"])
 def add_product(request):
-    if not request.user.is_superuser and request.user.is_authenticated:
+    pdb.set_trace()
+    if not request.user.is_admin and request.user.is_authenticated:
         user_instance = request.user
         try:
             permissions = user_instance.permission.all()
@@ -160,7 +161,7 @@ def add_product(request):
                              error="user do not have permission to product"),
                             status=status.HTTP_403_FORBIDDEN)
 
-    user_instance = User.objects.get(user=request.user)
+    user_instance = request.user
     serialize_product_data = ProductSerializer(data=request.data,
                                                many=type(request.data)==list,
                                                context={'user_instance':user_instance})

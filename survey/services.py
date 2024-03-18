@@ -20,6 +20,8 @@ def response_template(status,**response_obj):
     }
 
 def get_auth_dialog():
+    import pdb
+    pdb.set_trace()
     url_params = urlencode({
 	    "redirect_uri": redirect_uri,
 	    "client_id": CLIENT_ID,

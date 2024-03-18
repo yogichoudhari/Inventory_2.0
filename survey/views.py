@@ -28,7 +28,7 @@ import pdb
 
 
 #Logger creation 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("file_logger")
 
 
 
@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 @api_view(["GET"])
 def oauth_dialog(request):
     auth_dialog_uri = get_auth_dialog()
-    return redirect(auth_dialog_uri)
+    return Response(response_template(STATUS_SUCCESS, url=auth_dialog_uri), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 def get_oauth_code(request):

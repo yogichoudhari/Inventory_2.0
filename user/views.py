@@ -69,27 +69,28 @@ def create_user(request):
     try:
         if request.method == "POST":
             user_data = request.data
-            billing_id = user_data['subscription']['billing_id']
-            product_id = user_data['subscription']['product_id']
+            subscription = user_data.pop('subscription',None)
+            if subscription:
+                billing_id = user_data['subscription']['billing_id']
+                product_id = user_data['subscription']['product_id']
             user_instance = request.user
             account_instance = Account.objects.get(admin=user_instance)
             
             # Wrap the code in a try-except block for handling serializer errors
             serialized = UserSerializer(data=user_data,context={"user": user_instance, "account": account_instance})
-            serialized.is_valid(raise_exception=True)
-            with transaction.atomic():
-                created_user_instance = serialized.save()
-                
-                # Create a Stripe customer
-                stripe_id = create_stripe_customer(created_user_instance)
-                created_user_instance.stripe_id = stripe_id
-                if 'subscription' in user_data:
-                    _,subscription_instance = assign_subscription_to_user(created_user_instance,billing_id,product_id)
-                    created_user_instance.subscription = subscription_instance  
-                # lastly save the user 
-                created_user_instance.save()
-            # Return a success response
-            return Response({"status": STATUS_SUCCESS, "message": "User is created successfully"},status=status.HTTP_201_CREATED)
+            if serialized.is_valid():
+                with transaction.atomic():
+                    created_user_instance = serialized.save()
+                    # Create a Stripe customer
+                    stripe_id = create_stripe_customer(created_user_instance)
+                    created_user_instance.stripe_id = stripe_id
+                    if 'subscription' in user_data:
+                        _,subscription_instance = assign_subscription_to_user(created_user_instance,billing_id,product_id)
+                        created_user_instance.subscription = subscription_instance  
+                    # lastly save the user 
+                    created_user_instance.save()
+                # Return a success response
+                return Response({"status": STATUS_SUCCESS, "message": "User is created successfully"},status=status.HTTP_201_CREATED)
     
     except Exception as e:
         # Log any unexpected exceptions
@@ -214,9 +215,10 @@ def reset_password(request):
         user_instance = User.objects.filter(id=user_id).first()
         if verify_otp(otp, user_instance):
             reset_password_serialzer = ResetPasswordSerializer(user_instance, data=request.data, partial=True)
-            if reset_password_serialzer.is_valid(raise_exception=True):
+            if reset_password_serialzer.is_valid():
                 reset_password_serialzer.save()
                 return Response(response_template(STATUS_SUCCESS,message="your password has been successfully reset"),status=status.HTTP_200_OK)
+        raise Exception("otp is not correct")
     except Exception as e:
         logger.error(f'an error occured during password reset')
         return Response(response_template(STATUS_FAILED, error=f'{str(e)}'), status=status.HTTP_400_BAD_REQUEST)
@@ -225,16 +227,18 @@ def reset_password(request):
 @permission_classes([IsAdminUser,IsAuthenticated])
 def grant_permission_to_user(request):
     try:
-        permission_id= request.data.get('permission_id')
+        
+        permission_set= request.data.get('permission_set')
         user_id = request.data.get('user_id')
         admin_user = request.user
-        granted = grant_permission(account=admin_user.account,user_id=user_id,permission_id=permission_id)
+        granted = grant_permission(account=admin_user.account,user_id=user_id,permission_set_ids=permission_set)
         if granted:
             return Response(response_template(STATUS_SUCCESS,message="permission granted"),status=status.HTTP_201_CREATED)
         else:
             return Response(response_template(STATUS_FAILED,error="Invalid User or Permission id"), status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        logger.exceptions(e,f'exeptions occured -- {str(e)}')
+        return Response(response_template(STATUS_FAILED, error=f'{str(e)}'))
+        logger.exception(e,f'exeptions occured -- {str(e)}')
         
 
 
@@ -248,36 +252,58 @@ def create_permission_set(request):
     else:
         return Response(response_template(STATUS_FAILED,error=serializer_permission.errors),status=status.HTTP_400_BAD_REQUEST)
     
-@api_view(['PATCH',"GET"])
+@api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def user_profile(request):
-    if request.method=='GET':
+    try:
         user = request.user
-        serialized_user = UpdateUserSerializer(user)
-        return Response(response_template(STATUS_SUCCESS,data=serialized_user.data),status=status.HTTP_200_OK)
-        
-    elif request.method=="PATCH":
-        user_instance = User.objects.get(user=request.user)
-        nested_user_data= request.data.get("user")
-        nested_user_id = nested_user_data.get("id")
-        user_instance = User.objects.get(pk=id)
-        user_serialize = UpdateUserSerializer(user_instance,data=request.data,partial=True,context={"user_id":nested_user_id})
-        if user_serialize.is_valid():
-            user_serialize.save()
-            return Response(response_template(STATUS_SUCCESS,message="profile is updated successfully"),status=status.HTTP_201_CREATED)
-        
-        else:
-            return Response(response_template(STATUS_FAILED,message=f'{user_serialize.errors}'),status=status.HTTP_400_BAD_REQUEST)
+        serialized_user = UserSerializer(user)
+        return Response(response_template(STATUS_SUCCESS, data=serialized_user.data), status=status.HTTP_200_OK)
+    except Exception as e:
+        logger.error(f'an error occured getting user profile: {str(e)}')
+        return Response(response_template(STATUS_FAILED, error=f'{str(e)}'), status=status.HTTP_400_BAD_REQUEST)
+    
 
 
+@api_view(['PATCH'])
+@permission_classes([IsAdminUser, IsAuthenticated])
+def update_user(request):
+    try:
+        user_data = request.data
+        subscription = user_data.pop('subscription',None)
+        if subscription:
+            billing_id = user_data['subscription']['billing_id']
+            product_id = user_data['subscription']['product_id']
+        user_id = user_data.get('id', None)
+        if not user_id:
+            raise Exception(f'user id is not provided')
+        user = User.objects.filter(id=user_id).first()
+        if not user:
+            raise Exception(f'user does not exists associated with this id')    
+
+        user_serializer = UserSerializer(instance=user, data=user_data, partial=True)
+        if user_serializer.is_valid():
+            user =  user_serializer.save()
+            if 'subscription' in user_data:
+                _,subscription_instance = assign_subscription_to_user(user,billing_id,product_id)
+                user.subscription = subscription_instance  
+                user.save()
+            return Response(response_template(STATUS_SUCCESS, message=f'user is successfully updated'), status=status.HTTP_200_OK)
+        return Response(response_template(STATUS_FAILED, error=user_serializer.errors), status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        logger.error(f'an error occured during user updation: {str(e)}')
+        return Response(response_template(STATUS_FAILED, error=f"{str(e)}"), status=status.HTTP_400_BAD_REQUEST)
+
+
+    
 
 @api_view(["GET"])
 @permission_classes([IsAdminUser,IsAuthenticated])
 def users(request):
     try:
-        admin_user = User.objects.get(user=request.user)
+        admin_user = request.user
         users = User.objects.filter(account=admin_user.account)
-        serialize_instances = UpdateUserSerializer(users,many=True)
+        serialize_instances = UserSerializer(users,many=True)
         return Response(response_template(STATUS_SUCCESS,data=serialize_instances.data),status=status.HTTP_200_OK)
     except Exception as e:
         logger.exception(f"An Error Occured: {str(e)}")

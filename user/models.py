@@ -61,7 +61,7 @@ class Role(models.Model):
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, username, email, account, first_name=None, 
+    def create_user(self, username, email, account=None, first_name=None, 
                     last_name=None, address=None, role=None, phone=None, subscription=None, 
                     stripe_id=None, password=None, is_imported=False ):
         """
@@ -143,7 +143,7 @@ class User(AbstractBaseUser):
     objects = MyUserManager()
     
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["email", "account"]
+    REQUIRED_FIELDS = ["email"]
 
     def __str__(self):
         return self.email

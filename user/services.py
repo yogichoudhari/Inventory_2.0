@@ -5,7 +5,7 @@ import logging
 import pdb
 from rest_framework_simplejwt.tokens import RefreshToken,AccessToken
 import stripe
-from django.contrib.auth.models import User
+from .models import User
 from decouple import config
 from django.dispatch import receiver
 from .signals import user_logged_in
@@ -23,14 +23,17 @@ stripe.api_key = config("STRIPE_SECRET_KEY")
 
 
 
-def grant_permission(account,permission_id,user_id):
+def grant_permission(account,permission_set_ids,user_id):
     user_instance = User.objects.filter(account=account,pk=user_id).first()
     if not user_instance:
         return False
-    permission_instance = Permission.objects.filter(pk=permission_id).first()
-    if not permission_instance:
+    if not permission_set_ids:
+        raise Exception(f'none permission set provided')
+    permission_instances = Permission.objects.filter(id__in=permission_set_ids)
+    if not permission_instances:
         return False
-    user_instance.permissions.add(permission_instance)
+    for permission in permission_instances:
+        user_instance.permissions.add(permission)
     user_instance.save()
     return True
 
